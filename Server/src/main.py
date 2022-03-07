@@ -8,21 +8,29 @@ def motor_config(args):
 
         elif args[0] == 'ZERO':
             if args[1] == 'LEFT':
-                return LMotor.zeroMotor()
+                LMotor.pause()
+                return LMotor.motorUtils.zeroMotor()
             elif args[1] == 'RIGHT':
-                return RMotor.zeroMotor()
+                RMotor.pause()
+                return RMotor.motorUtils.zeroMotor()
             elif args[1] == 'BOTH':
-                return f'LEFT: {LMotor.zeroMotor()}\nRIGHT: {RMotor.zeroMotor()}'
+                LMotor.pause()
+                RMotor.pause()
+                return f'LEFT: {LMotor.motorUtils.zeroMotor()}\nRIGHT: {RMotor.motorUtils.zeroMotor()}'
             else:
                 return 'Invalid Command Arguments!'
 
         elif args[0] == 'ANGLE':
             if args[1] == 'LEFT':
-                return LMotor.setAngleDeg(float(args[2]))
+                LMotor.pause()
+                return LMotor.motorUtils.setAngleDeg(float(args[2]))
             elif args[1] == 'RIGHT':
-                return RMotor.setAngleDeg(float(args[2]))
+                RMotor.pause()
+                return RMotor.motorUtils.setAngleDeg(float(args[2]))
             elif args[1] == 'BOTH':
-                return f'LEFT: {LMotor.setAngleDeg(float(args[2]))}\nRIGHT: {RMotor.setAngleDeg(float(args[2]))}'
+                LMotor.pause()
+                RMotor.pause()
+                return f'LEFT: {LMotor.motorUtils.setAngleDeg(float(args[2]))}\nRIGHT: {RMotor.motorUtils.setAngleDeg(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
 
@@ -30,31 +38,31 @@ def motor_config(args):
 
             if args[2] == 'FREQ':
                 if args[1] == 'LEFT':
-                    return LMotor.setFlapFreqHz(float(args[3]))
+                    return LMotor.motorUtils.setFlapFreqHz(float(args[3]))
                 elif args[1] == 'RIGHT':
-                    return RMotor.setFlapFreqHz(float(args[3]))
+                    return RMotor.motorUtils.setFlapFreqHz(float(args[3]))
                 elif args[1] == 'BOTH':
-                    return f'LEFT: {LMotor.setFlapFreqHz(float(args[3]))}\nRIGHT: {RMotor.setFlapFreqHz(float(args[3]))}'
+                    return f'LEFT: {LMotor.motorUtils.setFlapFreqHz(float(args[3]))}\nRIGHT: {RMotor.motorUtils.setFlapFreqHz(float(args[3]))}'
                 else:
                     return 'Invalid Command Arguments!'
 
             elif args[2] == 'AMP':
                 if args[1] == 'LEFT':
-                    return LMotor.setFlapAmplitudeDeg(float(args[3]))
+                    return LMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))
                 elif args[1] == 'RIGHT':
-                    return RMotor.setFlapAmplitudeDeg(float(args[3]))
+                    return RMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))
                 elif args[1] == 'BOTH':
-                    return f'LEFT: {LMotor.setFlapAmplitudeDeg(float(args[3]))}\nRIGHT: {RMotor.setFlapAmplitudeDeg(float(args[3]))}'
+                    return f'LEFT: {LMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))}\nRIGHT: {RMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))}'
                 else:
                     return 'Invalid Command Arguments!'
 
             elif args[2] == 'SRATE':
                 if args[1] == 'LEFT':
-                    return LMotor.setFlapSampleRateHz(float(args[3]))
+                    return LMotor.motorUtils.setFlapSampleRateHz(float(args[3]))
                 elif args[1] == 'RIGHT':
-                    return RMotor.setFlapSampleRateHz(float(args[3]))
+                    return RMotor.motorUtils.setFlapSampleRateHz(float(args[3]))
                 elif args[1] == 'BOTH':
-                    return f'LEFT: {LMotor.setFlapSampleRateHz(float(args[3]))}\nRIGHT: {RMotor.setFlapSampleRateHz(float(args[3]))}'
+                    return f'LEFT: {LMotor.motorUtils.setFlapSampleRateHz(float(args[3]))}\nRIGHT: {RMotor.motorUtils.setFlapSampleRateHz(float(args[3]))}'
                 else:
                     return 'Invalid Command Arguments!'
             
@@ -66,21 +74,38 @@ def motor_config(args):
 
         elif args[0] == 'START':   
             if args[1] == 'LEFT':
-                return LMotor.runFlapThread(int(args[2]))
+                try:
+                    LMotor.resume()
+                    return 'Success!'
+                except:
+                    return 'Error Occurred!'
             elif args[1] == 'RIGHT':
-                return RMotor.runFlapThread(int(args[2]))
+                try:
+                    RMotor.resume()
+                    return 'Success!'
+                except:
+                    return 'Error Occurred!'
             elif args[1] == 'BOTH':
-                return 'Under Development!'
+                try:
+                    LMotor.resume()
+                    RMotor.resume()
+                    return 'Success!'
+                except:
+                    return 'Error Occurred!'
             else:
                 return 'Invalid Command Arguments!'
 
         elif args[0] == 'STOP':   
             if args[1] == 'LEFT':
-                return LMotor.stopMotor()
+                LMotor.pause()
+                return LMotor.motorUtils.stopMotor()
             elif args[1] == 'RIGHT':
-                return RMotor.stopMotor()
+                RMotor.pause()
+                return RMotor.motorUtils.stopMotor()
             elif args[1] == 'BOTH':
-                return f'LEFT: {LMotor.stopMotor()}\nRIGHT: {RMotor.stopMotor()}'
+                LMotor.pause()
+                RMotor.pause()
+                return f'LEFT: {LMotor.motorUtils.stopMotor()}\nRIGHT: {RMotor.motorUtils.stopMotor()}'
             else:
                 return 'Invalid Command Arguments!'
         

@@ -1,8 +1,9 @@
 from rpi_hardware_pwm import HardwarePWM
+import threading
 import numpy as np
 import time
 
-class Motor:
+class MotorUtils:
 
     # motor constants
     refreshRateHz = 333
@@ -25,8 +26,6 @@ class Motor:
         self.flapSampleRateHz = 50
         self.flapAngleArray = None
         self.updateFlapAngleArray()
-
-        #self.flapThread = None
 
         self.pwm = HardwarePWM(pwm_channel=pwm_channel, hz=self.refreshRateHz)
         self.pwm.start(0) # initialize pwm at 0% duty
@@ -85,8 +84,7 @@ class Motor:
                 self.pwm.change_duty_cycle(self.angleDegToDuty(angleDeg))
                 return 'Success!'
             except:
-                return str(self.angleDegToDuty(angleDeg)) 
-                #return 'Error Occurred!'
+                return 'Error Occurred!'
 
     def zeroMotor(self):
         return self.setAngleDeg(0)
@@ -98,14 +96,30 @@ class Motor:
         except: 
             return 'Error Occurred!'
 
-    def runFlapThread(self, flaps):
-        try:
-            for _ in range(flaps):
-                for angle in self.flapAngleArray:
-                    timeStart = time.time()
-                    self.setAngleDeg(angle)
-                    time.sleep((1/self.flapSampleRateHz) - (time.time() - timeStart))
-            return 'Success!'
-        except: 
-            return 'Error Occurred!'
-        
+class Motor(threading.Thread):
+    def __init__(self, pwm_channel):
+        super(Motor, self).__init__()
+        self.paused = True  # Start out paused.
+        self.state = threading.Condition()
+        self.motorUtils = MotorUtils(pwm_channel)
+
+    def run(self):
+        while True:
+            with self.state:
+                if self.paused:
+                    self.state.wait()  # Block execution until notified.
+            for angle in self.motorUtils.flapAngleArray:
+                if self.paused:
+                    break
+                timeStart = time.time()
+                self.motorUtils.setAngleDeg(angle)
+                time.sleep((1/self.motorUtils.flapSampleRateHz) - (time.time() - timeStart))
+
+    def pause(self):
+        with self.state:
+            self.paused = True  # Block self.
+
+    def resume(self):
+        with self.state:
+            self.paused = False
+            self.state.notify()  # Unblock self if waiting.
