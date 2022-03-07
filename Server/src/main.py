@@ -135,7 +135,7 @@ def print_help(args):
             'MOTOR ZERO [LEFT|RIGHT|BOTH]\n'             
             'MOTOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
             'MOTOR SET [LEFT|RIGHT|BOTH] [FREQ|AMP|SRATE|DELAY] [value]\n'
-            'MOTOR START [LEFT|RIGHT|BOTH] [flaps]\n'    
+            'MOTOR START [LEFT|RIGHT|BOTH]\n'    
             'MOTOR STOP [LEFT|RIGHT|BOTH]\n'             
             'ADC SHOW\n'                                 
             'IMU SHOW\n'                                 
@@ -152,7 +152,9 @@ commandDict = {'HELP': print_help,
 }
 
 RMotor = Motor(pwm_channel=0)
+RMotor.start()
 LMotor = Motor(pwm_channel=1)
+LMotor.start()
 
 serverMACAddress = 'B8:27:EB:C3:F3:BC' # MAC address of server (raspberry pi)
 serverPort = 2 # arbitrary but has to match client
