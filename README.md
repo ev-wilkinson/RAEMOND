@@ -31,7 +31,7 @@ sudo nano /etc/rc.local
 ```
 2. Add line
 ```bash
-sudo python3 /home/pi/RAEMOND/server/src/main.py &
+sudo python3 /home/pi/RAEMOND/Server/src/main.py &
 ```
 3. Reboot.
 
