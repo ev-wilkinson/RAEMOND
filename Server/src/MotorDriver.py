@@ -3,6 +3,42 @@ import threading
 import numpy as np
 import time
 
+def init():
+
+    # initiliaze motors
+    global RMotor, LMotor
+    RMotor, LMotor = Motor(pwm_channel=0), Motor(pwm_channel=1)
+    RMotor.start()
+    LMotor.start()
+
+class Motor(threading.Thread):
+    def __init__(self, pwm_channel):
+        super(Motor, self).__init__()
+        self.paused = True  # Start out paused.
+        self.state = threading.Condition()
+        self.motorUtils = MotorUtils(pwm_channel)
+
+    def run(self):
+        while True:
+            with self.state:
+                if self.paused:
+                    self.state.wait()  # Block execution until notified.
+            for angle in self.motorUtils.flapAngleArray:
+                if self.paused:
+                    break
+                timeStart = time.time()
+                self.motorUtils.setAngleDeg(angle)
+                time.sleep((1/self.motorUtils.flapSampleRateHz) - (time.time() - timeStart))
+
+    def pause(self):
+        with self.state:
+            self.paused = True  # Block self.
+
+    def resume(self):
+        with self.state:
+            self.paused = False
+            self.state.notify()  # Unblock self if waiting.
+
 class MotorUtils:
 
     # motor constants
@@ -95,31 +131,3 @@ class MotorUtils:
             return 'Success!'
         except: 
             return 'Error Occurred!'
-
-class Motor(threading.Thread):
-    def __init__(self, pwm_channel):
-        super(Motor, self).__init__()
-        self.paused = True  # Start out paused.
-        self.state = threading.Condition()
-        self.motorUtils = MotorUtils(pwm_channel)
-
-    def run(self):
-        while True:
-            with self.state:
-                if self.paused:
-                    self.state.wait()  # Block execution until notified.
-            for angle in self.motorUtils.flapAngleArray:
-                if self.paused:
-                    break
-                timeStart = time.time()
-                self.motorUtils.setAngleDeg(angle)
-                time.sleep((1/self.motorUtils.flapSampleRateHz) - (time.time() - timeStart))
-
-    def pause(self):
-        with self.state:
-            self.paused = True  # Block self.
-
-    def resume(self):
-        with self.state:
-            self.paused = False
-            self.state.notify()  # Unblock self if waiting.
