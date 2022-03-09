@@ -1,10 +1,10 @@
-import MotorDriver
+import motor
 
 def init():
 
     # setup commands dictionary
-    global commandDict
-    commandDict = {'HELP': print_help,
+    global command_dict
+    command_dict = {'HELP': print_help,
                    'MOTOR': motor_config,
                    'ADC': adc_config,
                    'IMU': imu_config,
@@ -19,29 +19,29 @@ def motor_config(args):
 
         elif args[0] == 'ZERO':
             if args[1] == 'LEFT':
-                MotorDriver.LMotor.pause()
-                return MotorDriver.LMotor.motorUtils.zeroMotor()
+                motor.LeftMotor.pause()
+                return motor.LeftMotor.MotorUtils.zero_motor()
             elif args[1] == 'RIGHT':
-                MotorDriver.RMotor.pause()
-                return MotorDriver.RMotor.motorUtils.zeroMotor()
+                motor.RightMotor.pause()
+                return motor.RightMotor.MotorUtils.zero_motor()
             elif args[1] == 'BOTH':
-                MotorDriver.LMotor.pause()
-                MotorDriver.RMotor.pause()
-                return f'LEFT: {MotorDriver.LMotor.motorUtils.zeroMotor()}\nRIGHT: {MotorDriver.RMotor.motorUtils.zeroMotor()}'
+                motor.LeftMotor.pause()
+                motor.RightMotor.pause()
+                return f'LEFT: {motor.LeftMotor.MotorUtils.zero_motor()}\nRIGHT: {motor.RightMotor.MotorUtils.zero_motor()}'
             else:
                 return 'Invalid Command Arguments!'
 
         elif args[0] == 'ANGLE':
             if args[1] == 'LEFT':
-                MotorDriver.LMotor.pause()
-                return MotorDriver.LMotor.motorUtils.setAngleDeg(float(args[2]))
+                motor.LeftMotor.pause()
+                return motor.LeftMotor.MotorUtils.set_angle_deg(float(args[2]))
             elif args[1] == 'RIGHT':
-                MotorDriver.RMotor.pause()
-                return MotorDriver.RMotor.motorUtils.setAngleDeg(float(args[2]))
+                motor.RightMotor.pause()
+                return motor.RightMotor.MotorUtils.set_angle_deg(float(args[2]))
             elif args[1] == 'BOTH':
-                MotorDriver.LMotor.pause()
-                MotorDriver.RMotor.pause()
-                return f'LEFT: {MotorDriver.LMotor.motorUtils.setAngleDeg(float(args[2]))}\nRIGHT: {MotorDriver.RMotor.motorUtils.setAngleDeg(float(args[2]))}'
+                motor.LeftMotor.pause()
+                motor.RightMotor.pause()
+                return f'LEFT: {motor.LeftMotor.MotorUtils.set_angle_deg(float(args[2]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_angle_deg(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
 
@@ -49,31 +49,31 @@ def motor_config(args):
 
             if args[2] == 'FREQ':
                 if args[1] == 'LEFT':
-                    return MotorDriver.LMotor.motorUtils.setFlapFreqHz(float(args[3]))
+                    return motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
                 elif args[1] == 'RIGHT':
-                    return MotorDriver.RMotor.motorUtils.setFlapFreqHz(float(args[3]))
+                    return motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
                 elif args[1] == 'BOTH':
-                    return f'LEFT: {MotorDriver.LMotor.motorUtils.setFlapFreqHz(float(args[3]))}\nRIGHT: {MotorDriver.RMotor.motorUtils.setFlapFreqHz(float(args[3]))}'
+                    return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}'
                 else:
                     return 'Invalid Command Arguments!'
 
             elif args[2] == 'AMP':
                 if args[1] == 'LEFT':
-                    return MotorDriver.LMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))
+                    return motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
                 elif args[1] == 'RIGHT':
-                    return MotorDriver.RMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))
+                    return motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
                 elif args[1] == 'BOTH':
-                    return f'LEFT: {MotorDriver.LMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))}\nRIGHT: {MotorDriver.RMotor.motorUtils.setFlapAmplitudeDeg(float(args[3]))}'
+                    return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}'
                 else:
                     return 'Invalid Command Arguments!'
 
             elif args[2] == 'SRATE':
                 if args[1] == 'LEFT':
-                    return MotorDriver.LMotor.motorUtils.setFlapSampleRateHz(float(args[3]))
+                    return motor.LeftMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))
                 elif args[1] == 'RIGHT':
-                    return MotorDriver.RMotor.motorUtils.setFlapSampleRateHz(float(args[3]))
+                    return motor.RightMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))
                 elif args[1] == 'BOTH':
-                    return f'LEFT: {MotorDriver.LMotor.motorUtils.setFlapSampleRateHz(float(args[3]))}\nRIGHT: {MotorDriver.RMotor.motorUtils.setFlapSampleRateHz(float(args[3]))}'
+                    return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))}'
                 else:
                     return 'Invalid Command Arguments!'
             
@@ -86,20 +86,20 @@ def motor_config(args):
         elif args[0] == 'START':   
             if args[1] == 'LEFT':
                 try:
-                    MotorDriver.LMotor.resume()
+                    motor.LeftMotor.resume()
                     return 'Success!'
                 except:
                     return 'Error Occurred!'
             elif args[1] == 'RIGHT':
                 try:
-                    MotorDriver.RMotor.resume()
+                    motor.RightMotor.resume()
                     return 'Success!'
                 except:
                     return 'Error Occurred!'
             elif args[1] == 'BOTH':
                 try:
-                    MotorDriver.LMotor.resume()
-                    MotorDriver.RMotor.resume()
+                    motor.LeftMotor.resume()
+                    motor.RightMotor.resume()
                     return 'Success!'
                 except:
                     return 'Error Occurred!'
@@ -108,15 +108,15 @@ def motor_config(args):
 
         elif args[0] == 'STOP':   
             if args[1] == 'LEFT':
-                MotorDriver.LMotor.pause()
-                return MotorDriver.LMotor.motorUtils.stopMotor()
+                motor.LeftMotor.pause()
+                return motor.LeftMotor.MotorUtils.stop_motor()
             elif args[1] == 'RIGHT':
-                MotorDriver.RMotor.pause()
-                return MotorDriver.RMotor.motorUtils.stopMotor()
+                motor.RightMotor.pause()
+                return motor.RightMotor.MotorUtils.stop_motor()
             elif args[1] == 'BOTH':
-                MotorDriver.LMotor.pause()
-                MotorDriver.RMotor.pause()
-                return f'LEFT: {MotorDriver.LMotor.motorUtils.stopMotor()}\nRIGHT: {MotorDriver.RMotor.motorUtils.stopMotor()}'
+                motor.LeftMotor.pause()
+                motor.RightMotor.pause()
+                return f'LEFT: {motor.LeftMotor.MotorUtils.stop_motor()}\nRIGHT: {motor.RightMotor.MotorUtils.stop_motor()}'
             else:
                 return 'Invalid Command Arguments!'
         

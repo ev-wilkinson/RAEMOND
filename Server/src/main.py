@@ -1,32 +1,32 @@
 import socket
 import settings
 import commands
-import MotorDriver
+import motor
 
 def main():
 
     settings.init()
     commands.init()
-    MotorDriver.init()
+    motor.init()
 
     while True:
         s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-        s.bind((settings.serverMACAddress, settings.serverPort))
-        s.listen(settings.serverBacklog)
+        s.bind((settings.SERVER_MAC_ADRRESS, settings.SERVER_PORT))
+        s.listen(settings.SERVER_BACKLOG)
         client, _ = s.accept()
         while True:
             try:
-                recvStr = client.recv(settings.bufferSize).decode().upper()
-                if recvStr:
-                    recvStrList = recvStr.split()
-                    command = recvStrList[0]
-                    if command in commands.commandDict.keys():
+                recv_str = client.recv(settings.BUFFER_SIZE).decode().upper()
+                if recv_str:
+                    recv_str_list = recv_str.split()
+                    command = recv_str_list[0]
+                    if command in commands.command_dict.keys():
                         try:
-                            args = recvStrList[1:]
+                            args = recv_str_list[1:]
                         except IndexError:
                             args = []
-                        returnStr = commands.commandDict[command](args)
-                        client.send(returnStr.encode())
+                        return_str = commands.command_dict[command](args)
+                        client.send(return_str.encode())
                     else:
                         client.send('Invalid Command!'.encode())
             except ConnectionResetError:
