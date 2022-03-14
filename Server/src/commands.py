@@ -1,4 +1,5 @@
 import motor
+import adc
 
 def init():
 
@@ -127,7 +128,22 @@ def motor_config(args):
         return 'Invalid Command Arguments!'
 
 def adc_config(args):
-    return 'Under Development!'
+        try:
+
+            if args[0] == 'SHOW':
+                return (f'CH0: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH0), 2)}V\n'
+                        f'CH1: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH1), 2)}V\n'
+                        f'CH2: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH2), 2)}V\n'
+                        f'CH3: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH3), 2)}V\n'
+                        f'CH4: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH4), 2)}V\n'
+                        '\nSuccess!')
+            else:
+                return 'Invalid Command Arguments!'
+        
+        except IndexError:  
+            return 'Invalid Command Arguments!'
+        except:         
+            return 'Error Ocurred!'
 
 def imu_config(args):
     return 'Under Development!'

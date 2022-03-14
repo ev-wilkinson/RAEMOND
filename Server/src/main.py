@@ -2,12 +2,14 @@ import socket
 import settings
 import commands
 import motor
+import adc
 
 def main():
 
     settings.init()
     commands.init()
     motor.init()
+    adc.init()
 
     while True:
         s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
