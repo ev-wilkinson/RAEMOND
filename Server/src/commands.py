@@ -128,22 +128,21 @@ def motor_config(args):
         return 'Invalid Command Arguments!'
 
 def adc_config(args):
-        try:
-
-            if args[0] == 'SHOW':
-                return (f'CH0: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH0), 2)}V\n'
-                        f'CH1: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH1), 2)}V\n'
-                        f'CH2: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH2), 2)}V\n'
-                        f'CH3: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH3), 2)}V\n'
-                        f'CH4: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH4), 2)}V\n'
-                        '\nSuccess!')
-            else:
-                return 'Invalid Command Arguments!'
-        
-        except IndexError:  
+    try:
+        if args[0] == 'SHOW':
+            return (f'7V4 Current: {round(adc.ADCData.get_7V4_current(), 4)} A\n'
+                    f'7V4 Voltage: {round(adc.ADCData.get_7V4_voltage(), 2)} V\n'
+                    f'5V Voltage: {round(adc.ADCData.get_5V_voltage(), 2)} V\n'
+                    f'Left Angle: {round(adc.ADCData.get_left_angle(), 2)} degrees\n'
+                    f'Right Angle: {round(adc.ADCData.get_right_angle(), 2)} degrees\n'
+                    '\nSuccess!')
+        else:
             return 'Invalid Command Arguments!'
-        except:         
-            return 'Error Ocurred!'
+        
+    except IndexError:  
+        return 'Invalid Command Arguments!'
+    except:         
+        return 'Error Ocurred!'
 
 def imu_config(args):
     return 'Under Development!'
