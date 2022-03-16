@@ -129,12 +129,19 @@ def motor_config(args):
 
 def adc_config(args):
     try:
-        if args[0] == 'SHOW':
+        if args[0] == 'DATA':
             return (f'7V4 Current: {round(adc.ADCData.get_7V4_current(), 4)} A\n'
                     f'7V4 Voltage: {round(adc.ADCData.get_7V4_voltage(), 2)} V\n'
                     f'5V Voltage: {round(adc.ADCData.get_5V_voltage(), 2)} V\n'
-                    f'Left Angle: {round(adc.ADCData.get_left_angle(), 2)} degrees\n'
-                    f'Right Angle: {round(adc.ADCData.get_right_angle(), 2)} degrees\n'
+                    f'Left Angle: {round(adc.ADCData.get_left_angle(), 1)} degrees\n'
+                    f'Right Angle: {round(adc.ADCData.get_right_angle(), 1)} degrees\n'
+                    '\nSuccess!')
+        elif args[0] == 'RAW':
+            return (f'CH0: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH0), 4)} V\n'
+                    f'CH1: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH1), 4)} V\n'
+                    f'CH2: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH2), 4)} V\n'
+                    f'CH3: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH3), 4)} V\n'
+                    f'CH4: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH4), 4)} V\n'
                     '\nSuccess!')
         else:
             return 'Invalid Command Arguments!'
@@ -163,7 +170,7 @@ def print_help(args):
             'MOTOR SET [LEFT|RIGHT|BOTH] [FREQ|AMP|SRATE|DELAY] [value]\n'
             'MOTOR START [LEFT|RIGHT|BOTH]\n'    
             'MOTOR STOP [LEFT|RIGHT|BOTH]\n'             
-            'ADC SHOW\n'                                 
+            'ADC [DATA|RAW]\n'                                 
             'IMU SHOW\n'                                 
             'ELEVATOR SET [value]\n'                     
             'ELEVATOR SHOW\n'                            
