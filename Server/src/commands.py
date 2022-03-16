@@ -16,7 +16,32 @@ def init():
 def motor_config(args):
     try:
         if args[0] == 'SHOW':
-            return 'Under Development!'
+            if args[1] == 'LEFT':
+                if motor.LeftMotor.MotorUtils.angle_deg is None:
+                    print_angle = 'None'
+                else:
+                    print_angle = str(round(motor.LeftMotor.MotorUtils.angle_deg, 1)) + ' degrees'
+                return (f'Angle Set: {print_angle}\n'
+                        f'Angle Read: {round(adc.ADCData.get_left_angle(), 1)} degrees\n'
+                        f'Flap Frequency: {round(motor.LeftMotor.MotorUtils.flap_freq_hz, 1)} Hz\n'
+                        f'Flap Amplitude: {round(motor.LeftMotor.MotorUtils.flap_amplitude_deg, 1)} degrees\n'
+                        f'Sample Rate: {round(motor.LeftMotor.MotorUtils.flap_sample_rate_hz, 1)} Hz\n'
+                        f'Running: {not motor.LeftMotor.paused}\n'
+                        '\nSuccess!')
+            elif args[1] == 'RIGHT':
+                if motor.RightMotor.MotorUtils.angle_deg is None:
+                    print_angle = 'None'
+                else:
+                    print_angle = str(round(motor.RightMotor.MotorUtils.angle_deg, 1)) + ' degrees'
+                return (f'Angle Set: {print_angle}\n'
+                        f'Angle Read: {round(adc.ADCData.get_right_angle(), 1)} degrees\n'
+                        f'Flap Frequency: {round(motor.RightMotor.MotorUtils.flap_freq_hz, 1)} Hz\n'
+                        f'Flap Amplitude: {round(motor.RightMotor.MotorUtils.flap_amplitude_deg, 1)} degrees\n'
+                        f'Sample Rate: {round(motor.RightMotor.MotorUtils.flap_sample_rate_hz, 1)} Hz\n'
+                        f'Running: {not motor.RightMotor.paused}\n'
+                        '\nSuccess!')
+            else:
+                return 'Invalid Command Arguments!'
 
         elif args[0] == 'ZERO':
             if args[1] == 'LEFT':
@@ -86,24 +111,15 @@ def motor_config(args):
 
         elif args[0] == 'START':   
             if args[1] == 'LEFT':
-                try:
-                    motor.LeftMotor.resume()
-                    return 'Success!'
-                except:
-                    return 'Error Occurred!'
+                motor.LeftMotor.resume()
+                return 'Success!'
             elif args[1] == 'RIGHT':
-                try:
-                    motor.RightMotor.resume()
-                    return 'Success!'
-                except:
-                    return 'Error Occurred!'
+                motor.RightMotor.resume()
+                return 'Success!'
             elif args[1] == 'BOTH':
-                try:
-                    motor.LeftMotor.resume()
-                    motor.RightMotor.resume()
-                    return 'Success!'
-                except:
-                    return 'Error Occurred!'
+                motor.LeftMotor.resume()
+                motor.RightMotor.resume()
+                return 'Success!'
             else:
                 return 'Invalid Command Arguments!'
 
@@ -126,6 +142,8 @@ def motor_config(args):
 
     except IndexError:
         return 'Invalid Command Arguments!'
+    except:         
+        return 'Error Ocurred!'
 
 def adc_config(args):
     try:
@@ -164,7 +182,7 @@ def print_help(args):
     return ('\nCommands:\n'
             'HELP\n'                                     
             'TERMINATE\n'                                
-            'MOTOR SHOW [LEFT|RIGHT|BOTH]\n'             
+            'MOTOR SHOW [LEFT|RIGHT]\n'             
             'MOTOR ZERO [LEFT|RIGHT|BOTH]\n'             
             'MOTOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
             'MOTOR SET [LEFT|RIGHT|BOTH] [FREQ|AMP|SRATE|DELAY] [value]\n'

@@ -56,6 +56,7 @@ class MotorUtils:
 
     def __init__(self, pwm_channel):
 
+        self.angle_deg = None
         self.flap_freq_hz = 0.5
         #self.flap_delay_sec = 0
         self.flap_amplitude_deg = 60
@@ -118,6 +119,7 @@ class MotorUtils:
         else:
             try:
                 self.pwm.change_duty_cycle(self.angle_to_duty(angle_deg))
+                self.angle_deg = angle_deg
                 return 'Success!'
             except:
                 return 'Error Occurred!'
@@ -128,6 +130,7 @@ class MotorUtils:
     def stop_motor(self):
         try:
             self.pwm.change_duty_cycle(0)
+            self.angle_deg = None
             return 'Success!'
         except: 
             return 'Error Occurred!'
