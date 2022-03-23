@@ -1,22 +1,32 @@
 import spidev
 import threading
+import time
 
 def init():
-    global ADCData
+    global ADCData, ADCCtrl
     ADCData = ADCUtils()
+    ADCCtrl = ADCThread()
+    ADCCtrl.start()
 
 class ADCThread(threading.Thread):
     def __init__(self):
         super(ADCThread, self).__init__()
-        self.paused = True  # Start out paused.
+        self.paused = False  # Start out running.
         self.state = threading.Condition()
-        self.ADC = ADCUtils()
+        self.sample_period_ms = 500
 
     def run(self):
+        global ADCData
         while True:
             with self.state:
                 if self.paused:
                     self.state.wait()  # Block execution until notified.
+            while True:
+                if self.paused:
+                    break
+                time_start = time.time()
+                ADCData.get_all_data()
+                time.sleep(self.sample_period_ms - (time.time() - time_start))
 
     def pause(self):
         with self.state:
@@ -67,8 +77,25 @@ class ADCUtils:
 
 
     def __init__(self):
+
+        # initialize spi communication
         self.spi = None
         self.spi_init()
+
+        # setup variables
+        self.adc_ch0_raw = None
+        self.adc_ch1_raw = None
+        self.adc_ch2_raw = None
+        self.adc_ch3_raw = None
+        self.adc_ch4_raw = None
+        self.adc_7V4_current = None
+        self.adc_7V4_voltage = None
+        self.adc_5V_voltage = None
+        self.adc_left_angle = None
+        self.adc_right_angle = None
+
+        # initial data aquisition
+        self.get_all_data()
 
     def spi_init(self):
         self.spi = spidev.SpiDev()
@@ -87,16 +114,33 @@ class ADCUtils:
         return self.ADC_VREF*int.from_bytes(self.get_adc_bytes(channel_bits), byteorder='big')/self.ADC_FULLSCALE
 
     def get_7V4_current(self):
-        return self.get_adc_voltage(self.ADC_CH0)/self.SENSE_RES/self.SENSE_GAIN
+        adc_voltage = self.get_adc_voltage(self.ADC_CH0)
+        self.adc_ch0_raw = adc_voltage
+        self.adc_7V4_current = adc_voltage/self.SENSE_RES/self.SENSE_GAIN
 
     def get_7V4_voltage(self):
-        return self.get_adc_voltage(self.ADC_CH1)/self.VOLT_DIV_FACTOR_7V4
+        adc_voltage = self.get_adc_voltage(self.ADC_CH1)
+        self.adc_ch1_raw = adc_voltage
+        self.adc_7V4_voltage = adc_voltage/self.VOLT_DIV_FACTOR_7V4
 
     def get_5V_voltage(self):
-        return self.get_adc_voltage(self.ADC_CH2)/self.VOLT_DIV_FACTOR_5V
+        adc_voltage = self.get_adc_voltage(self.ADC_CH2)
+        self.adc_ch2_raw = adc_voltage
+        self.adc_5V_voltage = adc_voltage/self.VOLT_DIV_FACTOR_5V
 
     def get_left_angle(self):
-        return self.get_adc_voltage(self.ADC_CH3)*self.LEFT_POT_SLOPE + self.LEFT_POT_OFFSET
+        adc_voltage = self.get_adc_voltage(self.ADC_CH3)
+        self.adc_ch3_raw = adc_voltage
+        self.adc_left_angle = adc_voltage*self.LEFT_POT_SLOPE + self.LEFT_POT_OFFSET
 
     def get_right_angle(self):
-        return self.get_adc_voltage(self.ADC_CH4)*self.RIGHT_POT_SLOPE + self.RIGHT_POT_OFFSET
+        adc_voltage = self.get_adc_voltage(self.ADC_CH4)
+        self.adc_ch4_raw = adc_voltage        
+        self.adc_right_angle = adc_voltage*self.RIGHT_POT_SLOPE + self.RIGHT_POT_OFFSET
+
+    def get_all_data(self):
+        self.get_7V4_current()
+        self.get_7V4_voltage()
+        self.get_5V_voltage()
+        self.get_left_angle()
+        self.get_right_angle()

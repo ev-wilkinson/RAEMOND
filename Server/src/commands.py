@@ -22,7 +22,7 @@ def motor_config(args):
                 else:
                     print_angle = str(round(motor.LeftMotor.MotorUtils.angle_deg, 1)) + ' degrees'
                 return (f'Angle Set: {print_angle}\n'
-                        f'Angle Read: {round(adc.ADCData.get_left_angle(), 1)} degrees\n'
+                        f'Angle Read: {round(adc.ADCData.adc_left_angle, 1)} degrees\n'
                         f'Flap Frequency: {round(motor.LeftMotor.MotorUtils.flap_freq_hz, 1)} Hz\n'
                         f'Flap Amplitude: {round(motor.LeftMotor.MotorUtils.flap_amplitude_deg, 1)} degrees\n'
                         f'Sample Rate: {round(motor.LeftMotor.MotorUtils.flap_sample_rate_hz, 1)} Hz\n'
@@ -34,7 +34,7 @@ def motor_config(args):
                 else:
                     print_angle = str(round(motor.RightMotor.MotorUtils.angle_deg, 1)) + ' degrees'
                 return (f'Angle Set: {print_angle}\n'
-                        f'Angle Read: {round(adc.ADCData.get_right_angle(), 1)} degrees\n'
+                        f'Angle Read: {round(adc.ADCData.adc_right_angle, 1)} degrees\n'
                         f'Flap Frequency: {round(motor.RightMotor.MotorUtils.flap_freq_hz, 1)} Hz\n'
                         f'Flap Amplitude: {round(motor.RightMotor.MotorUtils.flap_amplitude_deg, 1)} degrees\n'
                         f'Sample Rate: {round(motor.RightMotor.MotorUtils.flap_sample_rate_hz, 1)} Hz\n'
@@ -148,18 +148,29 @@ def motor_config(args):
 def adc_config(args):
     try:
         if args[0] == 'DATA':
-            return (f'7V4 Current: {round(adc.ADCData.get_7V4_current(), 4)} A\n'
-                    f'7V4 Voltage: {round(adc.ADCData.get_7V4_voltage(), 2)} V\n'
-                    f'5V Voltage: {round(adc.ADCData.get_5V_voltage(), 2)} V\n'
-                    f'Left Angle: {round(adc.ADCData.get_left_angle(), 1)} degrees\n'
-                    f'Right Angle: {round(adc.ADCData.get_right_angle(), 1)} degrees\n'
+            paused = adc.ADCCtrl.paused # get initial pause state
+            adc.ADCCtrl.pause()
+            adc.ADCData.get_all_data()
+            if not paused: 
+                adc.ADCCtrl.resume() # restore if previously running
+            return (f'7V4 Current: {round(adc.ADCData.adc_7V4_current, 4)} A\n'
+                    f'7V4 Voltage: {round(adc.ADCData.adc_7V4_voltage, 2)} V\n'
+                    f'5V Voltage: {round(adc.ADCData.adc_5V_voltage, 2)} V\n'
+                    f'Left Angle: {round(adc.ADCData.adc_left_angle, 1)} degrees\n'
+                    f'Right Angle: {round(adc.ADCData.adc_right_angle, 1)} degrees\n'
                     '\nSuccess!')
+
         elif args[0] == 'RAW':
-            return (f'CH0: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH0), 4)} V\n'
-                    f'CH1: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH1), 4)} V\n'
-                    f'CH2: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH2), 4)} V\n'
-                    f'CH3: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH3), 4)} V\n'
-                    f'CH4: {round(adc.ADCData.get_adc_voltage(adc.ADCData.ADC_CH4), 4)} V\n'
+            paused = adc.ADCCtrl.paused # get initial pause state
+            adc.ADCCtrl.pause()
+            adc.ADCData.get_all_data()
+            if not paused: 
+                adc.ADCCtrl.resume() # restore if previously running
+            return (f'CH0: {round(adc.ADCData.adc_ch0_raw, 4)} V\n'
+                    f'CH1: {round(adc.ADCData.adc_ch1_raw, 4)} V\n'
+                    f'CH2: {round(adc.ADCData.adc_ch2_raw, 4)} V\n'
+                    f'CH3: {round(adc.ADCData.adc_ch3_raw, 4)} V\n'
+                    f'CH4: {round(adc.ADCData.adc_ch4_raw, 4)} V\n'
                     '\nSuccess!')
         else:
             return 'Invalid Command Arguments!'
