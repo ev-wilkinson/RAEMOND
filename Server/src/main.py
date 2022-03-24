@@ -1,13 +1,20 @@
 import socket
+import RPi.GPIO as GPIO
 import settings
 import commands
+import gpio
 import motor
 import adc
 
 def main():
 
+    # gpio settings
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+
     settings.init()
     commands.init()
+    gpio.init()
     motor.init()
     adc.init()
 

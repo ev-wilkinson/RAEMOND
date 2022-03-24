@@ -53,10 +53,6 @@ class IOUtils:
     BUTTON_PIN = 27
 
     def __init__(self):
-        
-        # gpio settings
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
 
         # setup button 
         GPIO.setup(self.BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
