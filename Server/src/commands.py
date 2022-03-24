@@ -46,14 +46,14 @@ def motor_config(args):
         elif args[0] == 'ZERO':
             if args[1] == 'LEFT':
                 motor.LeftMotor.pause()
-                return motor.LeftMotor.MotorUtils.zero_motor()
+                return motor.LeftMotor.MotorUtils.zero_angle()
             elif args[1] == 'RIGHT':
                 motor.RightMotor.pause()
-                return motor.RightMotor.MotorUtils.zero_motor()
+                return motor.RightMotor.MotorUtils.zero_angle()
             elif args[1] == 'BOTH':
                 motor.LeftMotor.pause()
                 motor.RightMotor.pause()
-                return f'LEFT: {motor.LeftMotor.MotorUtils.zero_motor()}\nRIGHT: {motor.RightMotor.MotorUtils.zero_motor()}'
+                return f'LEFT: {motor.LeftMotor.MotorUtils.zero_angle()}\nRIGHT: {motor.RightMotor.MotorUtils.zero_angle()}'
             else:
                 return 'Invalid Command Arguments!'
 
@@ -111,12 +111,19 @@ def motor_config(args):
 
         elif args[0] == 'START':   
             if args[1] == 'LEFT':
+                motor.LeftMotor.MotorUtils.zero_angle()
+                time.sleep(1)
                 motor.LeftMotor.resume()
                 return 'Success!'
             elif args[1] == 'RIGHT':
+                motor.RightMotor.MotorUtils.zero_angle()
+                time.sleep(1)
                 motor.RightMotor.resume()
                 return 'Success!'
             elif args[1] == 'BOTH':
+                motor.LeftMotor.MotorUtils.zero_angle()
+                motor.RightMotor.MotorUtils.zero_angle()
+                time.sleep(1)
                 motor.LeftMotor.resume()
                 motor.RightMotor.resume()
                 return 'Success!'
@@ -126,14 +133,14 @@ def motor_config(args):
         elif args[0] == 'STOP':   
             if args[1] == 'LEFT':
                 motor.LeftMotor.pause()
-                return motor.LeftMotor.MotorUtils.stop_motor()
+                return motor.LeftMotor.MotorUtils.stop()
             elif args[1] == 'RIGHT':
                 motor.RightMotor.pause()
-                return motor.RightMotor.MotorUtils.stop_motor()
+                return motor.RightMotor.MotorUtils.stop()
             elif args[1] == 'BOTH':
                 motor.LeftMotor.pause()
                 motor.RightMotor.pause()
-                return f'LEFT: {motor.LeftMotor.MotorUtils.stop_motor()}\nRIGHT: {motor.RightMotor.MotorUtils.stop_motor()}'
+                return f'LEFT: {motor.LeftMotor.MotorUtils.stop()}\nRIGHT: {motor.RightMotor.MotorUtils.stop()}'
             else:
                 return 'Invalid Command Arguments!'
         

@@ -124,10 +124,10 @@ class MotorUtils:
             except:
                 return 'Error Occurred!'
 
-    def zero_motor(self):
+    def zero_angle(self):
         return self.set_angle_deg(0)
 
-    def stop_motor(self):
+    def stop(self):
         try:
             self.pwm.change_duty_cycle(0)
             self.angle_deg = None
