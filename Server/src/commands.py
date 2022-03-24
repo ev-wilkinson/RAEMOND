@@ -1,6 +1,8 @@
+import time
 import motor
 import adc
 import imu
+import elevator
 
 def init():
 
@@ -226,7 +228,75 @@ def imu_config(args):
         return 'Error Ocurred!'
 
 def elevator_config(args):
-    return 'Under Development!'
+    try:
+        if args[0] == 'SHOW':
+            if args[1] == 'LEFT':
+                if elevator.LeftElevator.ElevatorUtils.angle_deg is None:
+                    print_angle = 'None'
+                else:
+                    print_angle = str(round(elevator.LeftElevator.ElevatorUtils.angle_deg, 1)) + ' degrees'
+                return (f'Angle Set: {print_angle}\n'
+                        f'Running: {not elevator.LeftElevator.paused}\n'
+                        '\nSuccess!')
+            elif args[1] == 'RIGHT':
+                if elevator.RightElevator.ElevatorUtils.angle_deg is None:
+                    print_angle = 'None'
+                else:
+                    print_angle = str(round(elevator.RightElevator.ElevatorUtils.angle_deg, 1)) + ' degrees'
+                return (f'Angle Set: {print_angle}\n'
+                        f'Running: {not elevator.RightElevator.paused}\n'
+                        '\nSuccess!')
+            else:
+                return 'Invalid Command Arguments!'
+
+        elif args[0] == 'ZERO':
+            if args[1] == 'LEFT':
+                elevator.LeftElevator.pause()
+                return elevator.LeftElevator.ElevatorUtils.zero_angle()
+            elif args[1] == 'RIGHT':
+                elevator.RightElevator.pause()
+                return elevator.RightElevator.ElevatorUtils.zero_angle()
+            elif args[1] == 'BOTH':
+                elevator.LeftElevator.pause()
+                elevator.RightElevator.pause()
+                return f'LEFT: {elevator.LeftElevator.ElevatorUtils.zero_angle()}\nRIGHT: {elevator.RightElevator.ElevatorUtils.zero_angle()}'
+            else:
+                return 'Invalid Command Arguments!'
+
+        elif args[0] == 'ANGLE':
+            if args[1] == 'LEFT':
+                elevator.LeftElevator.pause()
+                return elevator.LeftElevator.ElevatorUtils.set_angle_deg(float(args[2]))
+            elif args[1] == 'RIGHT':
+                elevator.RightElevator.pause()
+                return elevator.RightElevator.ElevatorUtils.set_angle_deg(float(args[2]))
+            elif args[1] == 'BOTH':
+                elevator.LeftElevator.pause()
+                elevator.RightElevator.pause()
+                return f'LEFT: {elevator.LeftElevator.ElevatorUtils.set_angle_deg(float(args[2]))}\nRIGHT: {elevator.RightElevator.ElevatorUtils.set_angle_deg(float(args[2]))}'
+            else:
+                return 'Invalid Command Arguments!'
+
+        elif args[0] == 'START':   
+            if args[1] == 'LEFT':
+                elevator.LeftElevator.ElevatorUtils.zero_angle()
+                time.sleep(1)
+                elevator.LeftElevator.resume()
+                return 'Success!'
+            elif args[1] == 'RIGHT':
+                elevator.RightElevator.ElevatorUtils.zero_angle()
+                time.sleep(1)
+                elevator.RightElevator.resume()
+                return 'Success!'
+            elif args[1] == 'BOTH':
+                elevator.LeftElevator.ElevatorUtils.zero_angle()
+                elevator.RightElevator.ElevatorUtils.zero_angle()
+                time.sleep(1)
+                elevator.LeftElevator.resume()
+                elevator.RightElevator.resume()
+                return 'Success!'
+            else:
+                return 'Invalid Command Arguments!'
 
 def terminate_program(args):
     return 'Under Development!'
@@ -242,7 +312,10 @@ def print_help(args):
             'MOTOR START [LEFT|RIGHT|BOTH]\n'    
             'MOTOR STOP [LEFT|RIGHT|BOTH]\n'             
             'ADC [DATA|RAW]\n'                                 
-            'ELEVATOR SET [value]\n'                     
-            'ELEVATOR SHOW\n'                            
             'IMU [DATA|RAW]\n'                                 
+            'ELEVATOR SHOW [LEFT|RIGHT]\n'             
+            'ELEVATOR ZERO [LEFT|RIGHT|BOTH]\n'        
+            'ELEVATOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
+            'ELEVATOR START [LEFT|RIGHT|BOTH]\n'
+            'ELEVATOR STOP [LEFT|RIGHT|BOTH]\n'                      
     )
