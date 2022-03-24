@@ -13,7 +13,7 @@ class ADCThread(threading.Thread):
         super(ADCThread, self).__init__()
         self.paused = False  # Start out running.
         self.state = threading.Condition()
-        self.sample_period_ms = 500
+        self.sample_period_s = 0.1
 
     def run(self):
         global ADCData
@@ -26,7 +26,7 @@ class ADCThread(threading.Thread):
                     break
                 time_start = time.time()
                 ADCData.get_all_data()
-                time.sleep(self.sample_period_ms - (time.time() - time_start))
+                time.sleep(self.sample_period_s - (time.time() - time_start))
 
     def pause(self):
         with self.state:
