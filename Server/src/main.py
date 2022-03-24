@@ -5,6 +5,7 @@ import commands
 import gpio
 import motor
 import adc
+import imu
 
 def main():
 
@@ -17,6 +18,7 @@ def main():
     gpio.init()
     motor.init()
     adc.init()
+    imu.init()
 
     while True:
         s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)

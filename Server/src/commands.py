@@ -1,5 +1,6 @@
 import motor
 import adc
+import imu
 
 def init():
 
@@ -188,7 +189,41 @@ def adc_config(args):
         return 'Error Ocurred!'
 
 def imu_config(args):
-    return 'Under Development!'
+    try:
+        if args[0] == 'DATA':
+            paused = imu.IMUCtrl.paused # get initial pause state
+            imu.IMUCtrl.pause()
+            imu.IMUData.get_all_data()
+            if not paused: 
+                imu.IMUCtrl.resume() # restore if previously running
+            return (f'ACC X: {round(imu.IMUData.acc_x, 4)} g\n'
+                    f'ACC Y: {round(imu.IMUData.acc_y, 4)} g\n'
+                    f'ACC Z: {round(imu.IMUData.acc_z, 4)} g\n'
+                    f'GYRO X: {round(imu.IMUData.gyro_x, 4)} deg/s\n'
+                    f'GYRO Y: {round(imu.IMUData.gyro_y, 4)} deg/s\n'
+                    f'GYRO Z: {round(imu.IMUData.gyro_z, 4)} deg/s\n'
+                    '\nSuccess!')
+
+        elif args[0] == 'RAW':
+            paused = imu.IMUCtrl.paused # get initial pause state
+            imu.IMUCtrl.pause()
+            imu.IMUData.get_all_data()
+            if not paused: 
+                imu.IMUCtrl.resume() # restore if previously running
+            return (f'ACC X raw: {round(imu.IMUData.acc_x_raw, 4)} g\n'
+                    f'ACC raw: {round(imu.IMUData.acc_y_raw, 4)} g\n'
+                    f'ACC Z raw: {round(imu.IMUData.acc_z_raw, 4)} g\n'
+                    f'GYRO X raw: {round(imu.IMUData.gyro_x_raw, 4)} deg/s\n'
+                    f'GYRO Y raw: {round(imu.IMUData.gyro_y_raw, 4)} deg/s\n'
+                    f'GYRO Z raw: {round(imu.IMUData.gyro_z_raw, 4)} deg/s\n'
+                    '\nSuccess!')
+        else:
+            return 'Invalid Command Arguments!'
+        
+    except IndexError:  
+        return 'Invalid Command Arguments!'
+    except:         
+        return 'Error Ocurred!'
 
 def elevator_config(args):
     return 'Under Development!'
@@ -207,7 +242,7 @@ def print_help(args):
             'MOTOR START [LEFT|RIGHT|BOTH]\n'    
             'MOTOR STOP [LEFT|RIGHT|BOTH]\n'             
             'ADC [DATA|RAW]\n'                                 
-            'IMU SHOW\n'                                 
             'ELEVATOR SET [value]\n'                     
             'ELEVATOR SHOW\n'                            
+            'IMU [DATA|RAW]\n'                                 
     )
