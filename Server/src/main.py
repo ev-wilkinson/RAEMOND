@@ -7,6 +7,7 @@ import motor
 import adc
 import imu
 import elevator
+import data_log
 
 def main():
 
@@ -21,6 +22,7 @@ def main():
     adc.init()
     imu.init()
     elevator.init()
+    data_log.init()
 
     while True:
         s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)

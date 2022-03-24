@@ -3,6 +3,7 @@ import motor
 import adc
 import imu
 import elevator
+import data_log
 
 def init():
 
@@ -13,7 +14,7 @@ def init():
                    'ADC': adc_config,
                    'IMU': imu_config,
                    'ELEVATOR': elevator_config,
-                   'TERMINATE': terminate_program
+                   'LOG': log_config
     }
 
 def motor_config(args):
@@ -298,13 +299,46 @@ def elevator_config(args):
             else:
                 return 'Invalid Command Arguments!'
 
-def terminate_program(args):
-    return 'Under Development!'
+        elif args[0] == 'STOP':   
+            if args[1] == 'LEFT':
+                elevator.LeftElevator.pause()
+                return elevator.LeftElevator.ElevatorUtils.stop()
+            elif args[1] == 'RIGHT':
+                elevator.RightElevator.pause()
+                return elevator.RightElevator.ElevatorUtils.stop()
+            elif args[1] == 'BOTH':
+                elevator.LeftElevator.pause()
+                elevator.RightElevator.pause()
+                return f'LEFT: {elevator.LeftElevator.ElevatorUtils.stop()}\nRIGHT: {elevator.RightElevator.ElevatorUtils.stop()}'
+            else:
+                return 'Invalid Command Arguments!'
+        
+        else:
+            return 'Invalid Command Arguments!'
+
+    except IndexError:
+        return 'Invalid Command Arguments!'
+    except:         
+        return 'Error Ocurred!'
+
+def log_config(args):
+    try:
+        if args[0] == 'START': 
+            data_log.FileWriter.resume()
+            return 'Success!'
+        elif args[0] == 'STOP':
+            data_log.FileWriter.pause()
+            return 'Success!'
+        else:
+            return 'Invalid Command Arguments!' 
+    except IndexError:
+        return 'Invalid Command Arguments!'
+    except:         
+        return 'Error Ocurred!'
 
 def print_help(args):
     return ('\nCommands:\n'
-            'HELP\n'                                     
-            'TERMINATE\n'                                
+            'HELP\n'                                                                    
             'MOTOR SHOW [LEFT|RIGHT]\n'             
             'MOTOR ZERO [LEFT|RIGHT|BOTH]\n'             
             'MOTOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
@@ -318,4 +352,6 @@ def print_help(args):
             'ELEVATOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
             'ELEVATOR START [LEFT|RIGHT|BOTH]\n'
             'ELEVATOR STOP [LEFT|RIGHT|BOTH]\n'                      
+            'LOG START\n'
+            'LOG STOP\n'                           
     )
