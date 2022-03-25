@@ -13,7 +13,7 @@ class IMUThread(threading.Thread):
         super(IMUThread, self).__init__()
         self.paused = False  # Start out running.
         self.state = threading.Condition()
-        self.sample_period_s = 0.1
+        self.sample_rate_hz = 20
 
     def run(self):
         global IMUData
@@ -26,7 +26,10 @@ class IMUThread(threading.Thread):
                     break
                 time_start = time.time()
                 IMUData.get_all_data()
-                time.sleep(self.sample_period_s - (time.time() - time_start))
+                try:
+                    time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
+                except ValueError:
+                    pass 
 
     def pause(self):
         with self.state:

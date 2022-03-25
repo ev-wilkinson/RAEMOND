@@ -28,7 +28,10 @@ class MotorThread(threading.Thread):
                     break
                 time_start = time.time()
                 self.MotorUtils.set_angle_deg(angle)
-                time.sleep((1/self.MotorUtils.flap_sample_rate_hz) - (time.time() - time_start))
+                try:
+                    time.sleep((1/self.MotorUtils.flap_sample_rate_hz) - (time.time() - time_start))
+                except ValueError:
+                    pass    
 
     def pause(self):
         with self.state:
@@ -60,7 +63,7 @@ class MotorUtils:
         self.flap_freq_hz = 0.5
         #self.flap_delay_sec = 0
         self.flap_amplitude_deg = 60
-        self.flap_sample_rate_hz = 50
+        self.flap_sample_rate_hz = 20
         self.flap_angle_array = None
         self.update_flap_angle_array()
 
