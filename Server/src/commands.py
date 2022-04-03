@@ -185,6 +185,8 @@ def imu_config(args):
                     f'GYRO X: {round(imu.IMUData.gyro_x, 4)} deg/s\n'
                     f'GYRO Y: {round(imu.IMUData.gyro_y, 4)} deg/s\n'
                     f'GYRO Z: {round(imu.IMUData.gyro_z, 4)} deg/s\n'
+                    f'Roll: {round(imu.IMUData.roll_angle_deg, 2)} degrees\n'
+                    f'Pitch: {round(imu.IMUData.pitch_angle_deg, 2)} degrees\n'
                     '\nSuccess!')
 
         elif args[0] == 'RAW':

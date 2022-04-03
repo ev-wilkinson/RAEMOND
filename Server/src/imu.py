@@ -1,6 +1,7 @@
 import smbus
 import threading
 import time
+import math
 
 def init():
     global IMUData, IMUCtrl
@@ -63,6 +64,8 @@ class IMU:
     # sensor constants
     ACC_SENSITIVITY_FACTOR = 16384.0
     GYRO_SENSITIVITY_FACTOR = 131.0
+    PITCH_OFFSET = -5.2
+    ROLL_OFFSET = -1.0 
 
     def __init__(self):
 
@@ -79,6 +82,8 @@ class IMU:
         self.gyro_x = None
         self.gyro_y = None
         self.gyro_z = None
+        self.pitch_angle_deg = None
+        self.roll_angle_deg = None
 
         # initialize i2c
         self.i2c = smbus.SMBus(self.I2C_PORT)
@@ -106,12 +111,12 @@ class IMU:
         return value
 
     def convert_all_data(self):
-        self.acc_x = self.acc_x_raw/self.ACC_SENSITIVITY_FACTOR 
-        self.acc_y = self.acc_y_raw/self.ACC_SENSITIVITY_FACTOR 
-        self.acc_z = self.acc_z_raw/self.ACC_SENSITIVITY_FACTOR 
-        self.gyro_x = self.gyro_x_raw/self.GYRO_SENSITIVITY_FACTOR
-        self.gyro_y = self.gyro_y_raw/self.GYRO_SENSITIVITY_FACTOR
-        self.gyro_z = self.gyro_z_raw/self.GYRO_SENSITIVITY_FACTOR
+        self.acc_x = -1*self.acc_x_raw/self.ACC_SENSITIVITY_FACTOR 
+        self.acc_y = -1*self.acc_y_raw/self.ACC_SENSITIVITY_FACTOR 
+        self.acc_z = -1*self.acc_z_raw/self.ACC_SENSITIVITY_FACTOR 
+        self.gyro_x = -1*self.gyro_x_raw/self.GYRO_SENSITIVITY_FACTOR
+        self.gyro_y = -1*self.gyro_y_raw/self.GYRO_SENSITIVITY_FACTOR
+        self.gyro_z = -1*self.gyro_z_raw/self.GYRO_SENSITIVITY_FACTOR
 
     def get_all_data(self):
         self.acc_x_raw = self.read_raw_data(self.ACCEL_XOUT_H)
@@ -121,3 +126,22 @@ class IMU:
         self.gyro_y_raw = self.read_raw_data(self.GYRO_YOUT_H)
         self.gyro_z_raw = self.read_raw_data(self.GYRO_ZOUT_H)
         self.convert_all_data()
+        self.get_pitch_angle()
+        self.get_roll_angle()
+
+    def get_dist(self, a, b):
+        return math.sqrt((a*a)+(b*b))
+
+    def get_y_rotation(self, x, y, z):
+        radians = math.atan2(x, self.get_dist(y,z))
+        return -math.degrees(radians)
+
+    def get_x_rotation(self, x, y, z):
+        radians = math.atan2(y, self.get_dist(x,z))
+        return math.degrees(radians)
+
+    def get_pitch_angle(self):
+        self.pitch_angle_deg = self.get_y_rotation(self.acc_x, self.acc_y, self.acc_z) + self.PITCH_OFFSET
+
+    def get_roll_angle(self):
+        self.roll_angle_deg = self.get_x_rotation(self.acc_x, self.acc_y, self.acc_z) + self.ROLL_OFFSET

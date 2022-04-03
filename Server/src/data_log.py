@@ -17,7 +17,7 @@ class FileWriteThread(threading.Thread):
         self.paused = True  # Start out paused.
         self.state = threading.Condition()
         self.sample_rate_hz = 20
-        self.file_header_list = ['Time', 'Left Set', 'Left Read', 'Right Set', 'Right Read', 'Voltage', 'Current', 'ACC X', 'ACC Y', 'ACC Z', 'GYRO X', 'GYRO Y', 'GYRO Z']
+        self.file_header_list = ['Time', 'Left Set', 'Left Read', 'Right Set', 'Right Read', 'Voltage', 'Current', 'ACC X', 'ACC Y', 'ACC Z', 'GYRO X', 'GYRO Y', 'GYRO Z', 'Roll', 'Pitch']
 
     def run(self):
         while True:
@@ -50,7 +50,8 @@ class FileWriteThread(threading.Thread):
                         right_angle = round(motor.RightMotor.MotorUtils.angle_deg, 2)
                     data_list = [round(time_counter, 2), left_angle, round(adc.ADCData.adc_left_angle, 2), right_angle, round(adc.ADCData.adc_right_angle, 2),
                                  round(adc.ADCData.adc_7V4_voltage, 4), round(adc.ADCData.adc_7V4_current, 4),
-                                 round(imu.IMUData.acc_x, 4), round(imu.IMUData.acc_y, 4), round(imu.IMUData.acc_z, 4), round(imu.IMUData.gyro_x, 4), round(imu.IMUData.gyro_y, 4), round(imu.IMUData.gyro_z, 4)]
+                                 round(imu.IMUData.acc_x, 4), round(imu.IMUData.acc_y, 4), round(imu.IMUData.acc_z, 4), round(imu.IMUData.gyro_x, 4), round(imu.IMUData.gyro_y, 4), round(imu.IMUData.gyro_z, 4),
+                                 round(imu.IMUData.roll_angle_deg, 2), round(imu.IMUData.pitch_angle_deg, 2)]
                     writer.writerow(data_list)
                     file.flush()
                     time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
