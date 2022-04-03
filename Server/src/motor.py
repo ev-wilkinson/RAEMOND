@@ -7,7 +7,7 @@ def init():
 
     # initiliaze motors
     global RightMotor, LeftMotor
-    RightMotor, LeftMotor = MotorThread(pwm_channel=0), MotorThread(pwm_channel=1)
+    RightMotor, LeftMotor = MotorThread(pwm_channel=0), MotorThread(pwm_channel=1, reverse_angle=True)
     RightMotor.start()
     LeftMotor.start()
 
@@ -57,9 +57,10 @@ class MotorUtils:
     MAX_FLAP_SAMPLE_RATE_HZ = 200
     MIN_FLAP_SAMPLE_RATE_HZ = 0
 
-    def __init__(self, pwm_channel):
+    def __init__(self, pwm_channel, reverse_angle=False):
 
         self.angle_deg = None
+        self.reverse_angle = reverse_angle
         self.flap_freq_hz = 0.5
         #self.flap_delay_sec = 0
         self.flap_amplitude_deg = 60
@@ -117,6 +118,8 @@ class MotorUtils:
                 return 'Error Occurred!'
 
     def set_angle_deg(self, angle_deg):
+        if self.reverse_angle:
+            angle_deg = -1*angle_deg
         if (angle_deg < self.MIN_ANGLE_DEG) or (angle_deg > self.MAX_ANGLE_DEG):
             return 'Invalid angle!'
         else:

@@ -4,7 +4,7 @@ import imu
 
 def init():
     global RightElevator, LeftElevator
-    RightElevator, LeftElevator = ElevatorThread(gpio_pin=23), ElevatorThread(gpio_pin=24)
+    RightElevator, LeftElevator = ElevatorThread(gpio_pin=23), ElevatorThread(gpio_pin=24, reverse_angle=True)
     RightElevator.start()
     LeftElevator.start()
 
@@ -16,11 +16,11 @@ class ElevatorThread(threading.Thread):
     GYRO_Y_NEG_THRES = -10
     NEG_COMPENSATION_ANGLE_DEG = 45
 
-    def __init__(self, gpio_pin):
+    def __init__(self, gpio_pin, reverse_angle=False):
         super(ElevatorThread, self).__init__()
         self.paused = True  # Start out paused.
         self.state = threading.Condition()
-        self.ElevatorUtils = ElevatorUtils(gpio_pin)
+        self.ElevatorUtils = ElevatorUtils(gpio_pin, reverse_angle)
 
     def run(self):
         while True:
