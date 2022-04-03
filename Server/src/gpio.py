@@ -1,21 +1,21 @@
 import RPi.GPIO as GPIO
 import threading
 import time
+import main
 
 def init():
-    global button_enabled, BlueLEDBlinker, IOCtrl
-    button_enabled = False
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    global IOCtrl, BlueLEDBlinker
     IOCtrl = IOUtils()
     BlueLEDBlinker = BlueLEDBlinkingThread()
     BlueLEDBlinker.start()
 
 def button_pressed(channel):
-    global button_enabled
-    if button_enabled:
-        button_enabled = False
+    if main.flap_mode:
+        main.flap_mode = False
     else:
-        button_enabled = True
-    print(f'Button enabled: {button_enabled}')
+        main.flap_mode = True
 
 class BlueLEDBlinkingThread(threading.Thread):
     def __init__(self):
