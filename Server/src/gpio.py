@@ -22,6 +22,7 @@ class BlueLEDBlinkingThread(threading.Thread):
         super(BlueLEDBlinkingThread, self).__init__()
         self.paused = False  # Start out running.
         self.state = threading.Condition()
+        self.blink_interval_s = 1
 
     def run(self):
         global IOCtrl
@@ -33,9 +34,9 @@ class BlueLEDBlinkingThread(threading.Thread):
                 if self.paused:
                     break
                 IOCtrl.turn_off_blue()
-                time.sleep(0.5)
+                time.sleep(self.blink_interval_s)
                 IOCtrl.turn_on_blue()
-                time.sleep(0.5)
+                time.sleep(self.blink_interval_s)
 
     def pause(self):
         with self.state:
@@ -45,6 +46,10 @@ class BlueLEDBlinkingThread(threading.Thread):
         with self.state:
             self.paused = False
             self.state.notify()  # Unblock self if waiting.
+
+    def set_blinking_interval(self, blink_interval_s):
+        self.blink_interval_s = blink_interval_s
+        
 
 class IOUtils:
 
