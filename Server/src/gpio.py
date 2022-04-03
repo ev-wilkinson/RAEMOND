@@ -1,21 +1,29 @@
 import RPi.GPIO as GPIO
 import threading
 import time
+import main
 
 def init():
-    global button_enabled, BlueLEDBlinker, IOCtrl
-    button_enabled = False
+    global IOCtrl, BlueLEDBlinker
     IOCtrl = IOUtils()
     BlueLEDBlinker = BlueLEDBlinkingThread()
     BlueLEDBlinker.start()
 
 def button_pressed(channel):
-    global button_enabled
-    if button_enabled:
-        button_enabled = False
+    global IOCtrl
+    counter = 0
+    while(GPIO.input(IOCtrl.BUTTON_PIN) == 0):
+        counter += 0.1
+        time.sleep(0.1)
+    if counter >= 3:
+        main.flap_mode = False
+        main.bluetooth_pairing_mode = True
     else:
-        button_enabled = True
-    print(f'Button enabled: {button_enabled}')
+        if main.bluetooth_pairing_mode:
+            main.flap_mode = False
+        else:
+            main.flap_mode = not main.flap_mode
+        main.bluetooth_pairing_mode = False
 
 class BlueLEDBlinkingThread(threading.Thread):
     def __init__(self):
