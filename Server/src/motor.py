@@ -12,11 +12,11 @@ def init():
     LeftMotor.start()
 
 class MotorThread(threading.Thread):
-    def __init__(self, pwm_channel):
+    def __init__(self, pwm_channel, reverse_angle=False):
         super(MotorThread, self).__init__()
         self.paused = True  # Start out paused.
         self.state = threading.Condition()
-        self.MotorUtils = MotorUtils(pwm_channel)
+        self.MotorUtils = MotorUtils(pwm_channel, reverse_angle)
 
     def run(self):
         while True:

@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import threading
 import imu
+import time
 
 def init():
     global RightElevator, LeftElevator
@@ -30,12 +31,16 @@ class ElevatorThread(threading.Thread):
             while True:
                 if self.paused:
                     break
-                if imu.IMUData.gyro_y > self.GYRO_Y_POS_THRES:
-                    self.ElevatorUtils.set_angle_deg(self.POS_COMPENSATION_ANGLE_DEG)
-                elif imu.IMUData.gyro_y < self.GYRO_Y_NEG_THRES:
-                    self.ElevatorUtils.set_angle_deg(self.NEG_COMPENSATION_ANGLE_DEG)
-                else:
-                    self.ElevatorUtils.zero_angle()
+                self.ElevatorUtils.set_angle_deg(self.POS_COMPENSATION_ANGLE_DEG)
+                time.sleep(1)
+                self.ElevatorUtils.set_angle_deg(self.NEG_COMPENSATION_ANGLE_DEG)
+                time.sleep(1)
+                # if imu.IMUData.gyro_y > self.GYRO_Y_POS_THRES:
+                #     self.ElevatorUtils.set_angle_deg(self.POS_COMPENSATION_ANGLE_DEG)
+                # elif imu.IMUData.gyro_y < self.GYRO_Y_NEG_THRES:
+                #     self.ElevatorUtils.set_angle_deg(self.NEG_COMPENSATION_ANGLE_DEG)
+                # else:
+                #     self.ElevatorUtils.zero_angle()
 
     def pause(self):
         with self.state:

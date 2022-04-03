@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import threading
 import time
-import main
+import settings
 
 def init():
     GPIO.setmode(GPIO.BCM)
@@ -12,15 +12,15 @@ def init():
     BlueLEDBlinker.start()
 
 def button_pressed(channel):
-    if main.flap_mode:
-        main.flap_mode = False
+    if settings.flap_mode:
+        settings.flap_mode = False
     else:
-        main.flap_mode = True
+        settings.flap_mode = True
 
 class BlueLEDBlinkingThread(threading.Thread):
     def __init__(self):
         super(BlueLEDBlinkingThread, self).__init__()
-        self.paused = False  # Start out running.
+        self.paused = True  # Start out paused.
         self.state = threading.Condition()
         self.blink_interval_s = 1
 
