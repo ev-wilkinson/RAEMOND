@@ -62,7 +62,6 @@ class MotorUtils:
         self.angle_deg = None
         self.reverse_angle = reverse_angle
         self.flap_freq_hz = 0.5
-        #self.flap_delay_sec = 0
         self.flap_amplitude_deg = 60
         self.flap_sample_rate_hz = 20
         self.flap_angle_array = None
@@ -101,17 +100,6 @@ class MotorUtils:
         else:
             try:
                 self.flap_amplitude_deg = flap_amplitude_deg
-                self.update_flap_angle_array()
-                return 'Success!'
-            except:
-                return 'Error Occurred!'
-
-    def set_flap_sample_rate_hz(self, flap_sample_rate_hz):
-        if (flap_sample_rate_hz < self.MIN_FLAP_SAMPLE_RATE_HZ) or (flap_sample_rate_hz > self.MAX_FLAP_SAMPLE_RATE_HZ):
-            return 'Invalid sample rate!'
-        else:        
-            try:
-                self.flap_sample_rate_hz = flap_sample_rate_hz
                 self.update_flap_angle_array()
                 return 'Success!'
             except:

@@ -6,9 +6,7 @@ import elevator
 import data_log
 
 def init():
-
-    # setup commands dictionary
-    global command_dict
+    global command_dict # setup commands dictionary
     command_dict = {'HELP': print_help,
                    'MOTOR': motor_config,
                    'ADC': adc_config,
@@ -75,41 +73,23 @@ def motor_config(args):
             else:
                 return 'Invalid Command Arguments!'
 
-        elif args[0] == 'SET':
+        elif args[0] == 'FREQ':
+            if args[1] == 'LEFT':
+                return motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
+            elif args[1] == 'RIGHT':
+                return motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
+            elif args[1] == 'BOTH':
+                return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}'
+            else:
+                return 'Invalid Command Arguments!'
 
-            if args[2] == 'FREQ':
-                if args[1] == 'LEFT':
-                    return motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
-                elif args[1] == 'RIGHT':
-                    return motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
-                elif args[1] == 'BOTH':
-                    return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}'
-                else:
-                    return 'Invalid Command Arguments!'
-
-            elif args[2] == 'AMP':
-                if args[1] == 'LEFT':
-                    return motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
-                elif args[1] == 'RIGHT':
-                    return motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
-                elif args[1] == 'BOTH':
-                    return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}'
-                else:
-                    return 'Invalid Command Arguments!'
-
-            elif args[2] == 'SRATE':
-                if args[1] == 'LEFT':
-                    return motor.LeftMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))
-                elif args[1] == 'RIGHT':
-                    return motor.RightMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))
-                elif args[1] == 'BOTH':
-                    return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_sample_rate_hz(float(args[3]))}'
-                else:
-                    return 'Invalid Command Arguments!'
-            
-            elif args[2] == 'DELAY':
-                return 'Under Development!'
-
+        elif args[0] == 'AMPLITUDE':
+            if args[1] == 'LEFT':
+                return motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
+            elif args[1] == 'RIGHT':
+                return motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
+            elif args[1] == 'BOTH':
+                return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}'
             else:
                 return 'Invalid Command Arguments!'
 
@@ -341,15 +321,16 @@ def print_help(args):
             'HELP\n'                                                                    
             'MOTOR SHOW [LEFT|RIGHT]\n'             
             'MOTOR ZERO [LEFT|RIGHT|BOTH]\n'             
-            'MOTOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
-            'MOTOR SET [LEFT|RIGHT|BOTH] [FREQ|AMP|SRATE|DELAY] [value]\n'
+            'MOTOR ANGLE [LEFT|RIGHT|BOTH] [value in degrees]\n'
+            'MOTOR FREQ [LEFT|RIGHT|BOTH] [value in hz]\n'
+            'MOTOR AMPLITUDE [LEFT|RIGHT|BOTH] [value in degrees]\n'
             'MOTOR START [LEFT|RIGHT|BOTH]\n'    
             'MOTOR STOP [LEFT|RIGHT|BOTH]\n'             
             'ADC [DATA|RAW]\n'                                 
             'IMU [DATA|RAW]\n'                                 
             'ELEVATOR SHOW [LEFT|RIGHT]\n'             
             'ELEVATOR ZERO [LEFT|RIGHT|BOTH]\n'        
-            'ELEVATOR ANGLE [LEFT|RIGHT|BOTH] [value]\n'
+            'ELEVATOR ANGLE [LEFT|RIGHT|BOTH] [value in degrees]\n'
             'ELEVATOR START [LEFT|RIGHT|BOTH]\n'
             'ELEVATOR STOP [LEFT|RIGHT|BOTH]\n'                      
             'LOG START\n'
