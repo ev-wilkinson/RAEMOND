@@ -6,6 +6,7 @@ import motor
 import adc
 import imu
 import elevator
+import settings
 
 def init():
     global FileWriter
@@ -17,7 +18,6 @@ class FileWriteThread(threading.Thread):
         super(FileWriteThread, self).__init__()
         self.paused = True  # Start out paused.
         self.state = threading.Condition()
-        self.sample_rate_hz = 20
         self.file_header_list = ['Time', 'Left Motor Set', 'Left Motor Read', 'Right Motor Set', 'Right Motor Read', 'Left Elevator Set', 'Right Elevator Set', 'Voltage', 'Current', 'ACC X', 'ACC Y', 'ACC Z', 'GYRO X', 'GYRO Y', 'GYRO Z', 'Roll', 'Pitch']
 
     def run(self):
@@ -65,10 +65,10 @@ class FileWriteThread(threading.Thread):
                     writer.writerow(data_list)
                     file.flush()
                     try:
-                        time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
+                        time.sleep((1/settings.LOG_SAMPLE_RATE_HZ) - (time.time() - time_start))
                     except ValueError:
                         pass
-                    time_counter += 1/self.sample_rate_hz
+                    time_counter += 1/settings.LOG_SAMPLE_RATE_HZ
                 
     def pause(self):
         with self.state:

@@ -2,6 +2,7 @@ from rpi_hardware_pwm import HardwarePWM
 import threading
 import numpy as np
 import time
+import settings
 
 def init():
 
@@ -29,7 +30,7 @@ class MotorThread(threading.Thread):
                 time_start = time.time()
                 self.MotorUtils.set_angle_deg(angle)
                 try:
-                    time.sleep((1/self.MotorUtils.flap_sample_rate_hz) - (time.time() - time_start))
+                    time.sleep((1/settings.MOTOR_FLAP_SAMPLE_RATE_HZ) - (time.time() - time_start))
                 except ValueError:
                     pass    
 
@@ -46,16 +47,10 @@ class MotorUtils:
 
     # motor constants
     REFRESH_RATE_HZ = 333
-
-    # limit values
     MAX_ANGLE_DEG = 65
     MIN_ANGLE_DEG = -65
     MAX_ANGLE_PULSE_WIDTH_US = 2100
     MIN_ANGLE_PULSE_WIDTH_US = 900
-    MAX_FLAP_FREQ_HZ = 2
-    MIN_FLAP_FREQ_HZ = 0
-    MAX_FLAP_SAMPLE_RATE_HZ = 200
-    MIN_FLAP_SAMPLE_RATE_HZ = 0
 
     def __init__(self, pwm_channel, reverse_angle=False):
 
@@ -63,7 +58,6 @@ class MotorUtils:
         self.reverse_angle = reverse_angle
         self.flap_freq_hz = 0.5
         self.flap_amplitude_deg = 60
-        self.flap_sample_rate_hz = 20
         self.flap_angle_array = None
         self.update_flap_angle_array()
 
@@ -80,11 +74,11 @@ class MotorUtils:
         return self.pulse_width_to_duty(self.angle_to_pulse_width(angle_deg))    
 
     def update_flap_angle_array(self):
-        time_array = np.arange(1/self.flap_sample_rate_hz, 1/self.flap_freq_hz + 1/self.flap_sample_rate_hz, 1/self.flap_sample_rate_hz)
+        time_array = np.arange(1/settings.MOTOR_FLAP_SAMPLE_RATE_HZ, 1/self.flap_freq_hz + 1/settings.MOTOR_FLAP_SAMPLE_RATE_HZ, 1/settings.MOTOR_FLAP_SAMPLE_RATE_HZ)
         self.flap_angle_array = self.flap_amplitude_deg*np.sin(2*np.pi*self.flap_freq_hz*time_array)
 
     def set_flap_freq_hz(self, flap_freq_hz):
-        if (flap_freq_hz < self.MIN_FLAP_FREQ_HZ) or (flap_freq_hz > self.MAX_FLAP_FREQ_HZ):
+        if (flap_freq_hz < settings.MOTOR_FLAP_FREQ_HZ_MIN) or (flap_freq_hz > settings.MOTOR_FLAP_FREQ_HZ_MAX):
             return 'Invalid flapping frequency!'
         else:
             try:

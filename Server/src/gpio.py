@@ -61,7 +61,7 @@ class IOUtils:
 
         # setup button 
         GPIO.setup(self.BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.BUTTON_PIN, GPIO.FALLING, callback=button_pressed, bouncetime=200)
+        GPIO.add_event_detect(self.BUTTON_PIN, GPIO.FALLING, callback=button_pressed, bouncetime=settings.BUTTON_BOUNCE_TIME_MS)
 
         # setup leds
         GPIO.setup(self.BLUE_LED_PIN, GPIO.OUT)

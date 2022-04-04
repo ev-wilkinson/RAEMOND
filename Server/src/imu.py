@@ -2,6 +2,7 @@ import smbus
 import threading
 import time
 import math
+import settings
 
 def init():
     global IMUData, IMUCtrl
@@ -14,7 +15,6 @@ class IMUThread(threading.Thread):
         super(IMUThread, self).__init__()
         self.paused = False  # Start out running.
         self.state = threading.Condition()
-        self.sample_rate_hz = 20
 
     def run(self):
         global IMUData
@@ -28,7 +28,7 @@ class IMUThread(threading.Thread):
                 time_start = time.time()
                 IMUData.get_all_data()
                 try:
-                    time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
+                    time.sleep((1/settings.IMU_SAMPLE_RATE_HZ) - (time.time() - time_start))
                 except ValueError:
                     pass 
 
@@ -60,12 +60,6 @@ class IMU:
     GYRO_XOUT_H    = 0x43
     GYRO_YOUT_H    = 0x45
     GYRO_ZOUT_H    = 0x47
-
-    # sensor constants
-    ACC_SENSITIVITY_FACTOR = 16384.0
-    GYRO_SENSITIVITY_FACTOR = 131.0
-    PITCH_OFFSET = -5.2
-    ROLL_OFFSET = -1.0 
 
     def __init__(self):
 
@@ -111,12 +105,12 @@ class IMU:
         return value
 
     def convert_all_data(self):
-        self.acc_x = -1*self.acc_x_raw/self.ACC_SENSITIVITY_FACTOR 
-        self.acc_y = -1*self.acc_y_raw/self.ACC_SENSITIVITY_FACTOR 
-        self.acc_z = -1*self.acc_z_raw/self.ACC_SENSITIVITY_FACTOR 
-        self.gyro_x = -1*self.gyro_x_raw/self.GYRO_SENSITIVITY_FACTOR
-        self.gyro_y = -1*self.gyro_y_raw/self.GYRO_SENSITIVITY_FACTOR
-        self.gyro_z = -1*self.gyro_z_raw/self.GYRO_SENSITIVITY_FACTOR
+        self.acc_x = -1*self.acc_x_raw/settings.IMU_ACC_SENSITIVITY_FACTOR
+        self.acc_y = -1*self.acc_y_raw/settings.IMU_ACC_SENSITIVITY_FACTOR 
+        self.acc_z = -1*self.acc_z_raw/settings.IMU_ACC_SENSITIVITY_FACTOR 
+        self.gyro_x = -1*self.gyro_x_raw/settings.IMU_GYRO_SENSITIVITY_FACTOR
+        self.gyro_y = -1*self.gyro_y_raw/settings.IMU_GYRO_SENSITIVITY_FACTOR
+        self.gyro_z = -1*self.gyro_z_raw/settings.IMU_GYRO_SENSITIVITY_FACTOR
 
     def get_all_data(self):
         self.acc_x_raw = self.read_raw_data(self.ACCEL_XOUT_H)
@@ -141,7 +135,7 @@ class IMU:
         return math.degrees(radians)
 
     def get_pitch_angle(self):
-        self.pitch_angle_deg = self.get_y_rotation(self.acc_x, self.acc_y, self.acc_z) + self.PITCH_OFFSET
+        self.pitch_angle_deg = self.get_y_rotation(self.acc_x, self.acc_y, self.acc_z) + settings.IMU_PITCH_OFFSET
 
     def get_roll_angle(self):
-        self.roll_angle_deg = self.get_x_rotation(self.acc_x, self.acc_y, self.acc_z) + self.ROLL_OFFSET
+        self.roll_angle_deg = self.get_x_rotation(self.acc_x, self.acc_y, self.acc_z) + settings.IMU_ROLL_OFFSET

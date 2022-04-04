@@ -1,6 +1,7 @@
 import spidev
 import threading
 import time
+import settings
 
 def init():
     global ADCData, ADCCtrl
@@ -13,7 +14,6 @@ class ADCThread(threading.Thread):
         super(ADCThread, self).__init__()
         self.paused = False  # Start out running.
         self.state = threading.Condition()
-        self.sample_rate_hz = 20
 
     def run(self):
         global ADCData
@@ -27,7 +27,7 @@ class ADCThread(threading.Thread):
                 time_start = time.time()
                 ADCData.get_all_data()
                 try:
-                    time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
+                    time.sleep((1/settings.ADC_SAMPLE_RATE_HZ) - (time.time() - time_start))
                 except ValueError:
                     pass 
 
@@ -71,12 +71,6 @@ class ADCUtils:
     # voltage divider constants
     VOLT_DIV_FACTOR_7V4 = 100/300
     VOLT_DIV_FACTOR_5V = 300/500
-
-    # potentiometer corrections
-    LEFT_POT_SLOPE = 103.45 # (angle2 - angle1)/(Vadc2 - Vadc1) = (90 - 0)/(2.52 - 1.65V)
-    LEFT_POT_OFFSET = -170.69 # -1*SLOPE*Vadc(angle=0) = -(103.45)(1.65V)
-    RIGHT_POT_SLOPE = 103.45 # (angle2 - angle1)/(Vadc2 - Vadc1) = (90 - 0)/(2.52 - 1.65V)
-    RIGHT_POT_OFFSET = -170.69 # -1*SLOPE*Vadc(angle=0) = -(103.45)(1.65V)
 
 
     def __init__(self):
@@ -134,12 +128,12 @@ class ADCUtils:
     def get_left_angle(self):
         adc_voltage = self.get_adc_voltage(self.ADC_CH3)
         self.adc_ch3_raw = adc_voltage
-        self.adc_left_angle = adc_voltage*self.LEFT_POT_SLOPE + self.LEFT_POT_OFFSET
+        self.adc_left_angle = adc_voltage*settings.LEFT_POT_CORR_SLOPE + settings.LEFT_POT_CORR_OFFSET
 
     def get_right_angle(self):
         adc_voltage = self.get_adc_voltage(self.ADC_CH4)
         self.adc_ch4_raw = adc_voltage        
-        self.adc_right_angle = adc_voltage*self.RIGHT_POT_SLOPE + self.RIGHT_POT_OFFSET
+        self.adc_right_angle = adc_voltage*settings.RIGHT_POT_CORR_SLOPE + settings.RIGHT_POT_CORR_OFFSET
 
     def get_all_data(self):
         self.get_7V4_current()
