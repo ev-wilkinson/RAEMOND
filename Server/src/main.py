@@ -48,6 +48,7 @@ def main():
             motor.RightMotor.MotorUtils.stop() # turn off right motor
             elevator.LeftElevator.pause() # pause left elevator setpoints
             elevator.RightElevator.pause() # pause right elevator setpoints
+            time.sleep(1)
             elevator.LeftElevator.ElevatorUtils.stop() # turn off left elevator
             elevator.RightElevator.ElevatorUtils.stop() # turn off right elevator
             data_log.FileWriter.pause() # stop logging data 

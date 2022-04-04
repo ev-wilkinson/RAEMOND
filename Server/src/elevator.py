@@ -2,26 +2,21 @@ import RPi.GPIO as GPIO
 import threading
 import imu
 import time
+import settings
 
 def init():
     global RightElevator, LeftElevator
-    RightElevator, LeftElevator = ElevatorThread(gpio_pin=23), ElevatorThread(gpio_pin=24, reverse_angle=True)
+    RightElevator, LeftElevator = ElevatorThread(gpio_pin=23, zero_offset=settings.RIGHT_ELEV_ZERO_OFFSET), ElevatorThread(gpio_pin=24, zero_offset=settings.LEFT_ELEV_ZERO_OFFSET, reverse_angle=True)
     RightElevator.start()
     LeftElevator.start()
 
 class ElevatorThread(threading.Thread):
 
-    # control settings
-    GYRO_Y_POS_THRES = 10
-    POS_COMPENSATION_ANGLE_DEG = -45
-    GYRO_Y_NEG_THRES = -10
-    NEG_COMPENSATION_ANGLE_DEG = 45
-
-    def __init__(self, gpio_pin, reverse_angle=False):
+    def __init__(self, gpio_pin, zero_offset, reverse_angle=False):
         super(ElevatorThread, self).__init__()
         self.paused = True  # Start out paused.
         self.state = threading.Condition()
-        self.ElevatorUtils = ElevatorUtils(gpio_pin, reverse_angle)
+        self.ElevatorUtils = ElevatorUtils(gpio_pin, zero_offset, reverse_angle)
 
     def run(self):
         while True:
@@ -31,16 +26,14 @@ class ElevatorThread(threading.Thread):
             while True:
                 if self.paused:
                     break
-                self.ElevatorUtils.set_angle_deg(self.POS_COMPENSATION_ANGLE_DEG)
-                time.sleep(1)
-                self.ElevatorUtils.set_angle_deg(self.NEG_COMPENSATION_ANGLE_DEG)
-                time.sleep(1)
-                # if imu.IMUData.gyro_y > self.GYRO_Y_POS_THRES:
-                #     self.ElevatorUtils.set_angle_deg(self.POS_COMPENSATION_ANGLE_DEG)
-                # elif imu.IMUData.gyro_y < self.GYRO_Y_NEG_THRES:
-                #     self.ElevatorUtils.set_angle_deg(self.NEG_COMPENSATION_ANGLE_DEG)
-                # else:
-                #     self.ElevatorUtils.zero_angle()
+                correction_angle_deg = -1*imu.IMUData.pitch_angle_deg*settings.ELEV_CORR_ANGLE_FACTOR
+                if settings.ELEV_CORR_ANGLE_DEG_MIN <= correction_angle_deg <= settings.ELEV_CORR_ANGLE_DEG_MAX:
+                    self.ElevatorUtils.set_angle_deg(correction_angle_deg)
+                elif correction_angle_deg < settings.ELEV_CORR_ANGLE_DEG_MIN:
+                    self.ElevatorUtils.set_angle_deg(settings.ELEV_CORR_ANGLE_DEG_MIN)
+                elif correction_angle_deg > settings.ELEV_CORR_ANGLE_DEG_MAX:
+                    self.ElevatorUtils.set_angle_deg(settings.ELEV_CORR_ANGLE_DEG_MAX)
+                time.sleep(settings.ELEV_CORR_PERIOD_S)
 
     def pause(self):
         with self.state:
@@ -63,11 +56,12 @@ class ElevatorUtils:
     MAX_ANGLE_PULSE_WIDTH_US = 2000
     MIN_ANGLE_PULSE_WIDTH_US = 1000
 
-    def __init__(self, gpio_pin, reverse_angle=False):
+    def __init__(self, gpio_pin, zero_offset, reverse_angle=False):
 
         # setup variables
         self.angle_deg = None
         self.reverse_angle = reverse_angle
+        self.zero_offset = zero_offset 
 
         # setup pwm 
         GPIO.setup(gpio_pin, GPIO.OUT)
@@ -90,7 +84,7 @@ class ElevatorUtils:
             return 'Invalid angle!'
         else:
             try:
-                self.pwm.ChangeDutyCycle(self.angle_to_duty(angle_deg))
+                self.pwm.ChangeDutyCycle(self.angle_to_duty(angle_deg+self.zero_offset))
                 self.angle_deg = angle_deg
                 return 'Success!'
             except:
