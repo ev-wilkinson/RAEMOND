@@ -2,6 +2,7 @@ import spidev
 import threading
 import time
 import settings
+import gpio
 
 def init():
     global ADCData, ADCCtrl
@@ -26,6 +27,10 @@ class ADCThread(threading.Thread):
                     break
                 time_start = time.time()
                 ADCData.get_all_data()
+                if ADCData.adc_7V4_voltage < settings.LOW_BATTERY_VOLTAGE:
+                    gpio.IOUtils.turn_on_red()
+                else:
+                    gpio.IOUtils.turn_off_red()    
                 try:
                     time.sleep((1/settings.ADC_SAMPLE_RATE_HZ) - (time.time() - time_start))
                 except ValueError:
