@@ -5,6 +5,7 @@ import datetime
 import motor
 import adc
 import imu
+import elevator
 
 def init():
     global FileWriter
@@ -17,7 +18,7 @@ class FileWriteThread(threading.Thread):
         self.paused = True  # Start out paused.
         self.state = threading.Condition()
         self.sample_rate_hz = 20
-        self.file_header_list = ['Time', 'Left Set', 'Left Read', 'Right Set', 'Right Read', 'Voltage', 'Current', 'ACC X', 'ACC Y', 'ACC Z', 'GYRO X', 'GYRO Y', 'GYRO Z', 'Roll', 'Pitch']
+        self.file_header_list = ['Time', 'Left Motor Set', 'Left Motor Read', 'Right Motor Set', 'Right Motor Read', 'Left Elevator Set', 'Right Elevator Set', 'Voltage', 'Current', 'ACC X', 'ACC Y', 'ACC Z', 'GYRO X', 'GYRO Y', 'GYRO Z', 'Roll', 'Pitch']
 
     def run(self):
         while True:
@@ -41,20 +42,32 @@ class FileWriteThread(threading.Thread):
                         break
                     time_start = time.time()
                     if motor.LeftMotor.MotorUtils.angle_deg is None:
-                        left_angle = 'None'
+                        left_motor_angle = 'None'
                     else:
-                        left_angle = round(motor.LeftMotor.MotorUtils.angle_deg, 2)
+                        left_motor_angle = round(motor.LeftMotor.MotorUtils.angle_deg, 2)
                     if motor.RightMotor.MotorUtils.angle_deg is None:
-                        right_angle = 'None'
+                        right_motor_angle = 'None'
                     else:
-                        right_angle = round(motor.RightMotor.MotorUtils.angle_deg, 2)
-                    data_list = [round(time_counter, 2), left_angle, round(adc.ADCData.adc_left_angle, 2), right_angle, round(adc.ADCData.adc_right_angle, 2),
+                        right_motor_angle = round(motor.RightMotor.MotorUtils.angle_deg, 2)
+                    if elevator.LeftElevator.ElevatorUtils.angle_deg is None:
+                        left_elevator_angle = 'None'
+                    else:
+                        left_elevator_angle = round(elevator.LeftElevator.ElevatorUtils.angle_deg, 2)
+                    if elevator.RightElevator.ElevatorUtils.angle_deg is None:
+                        right_elevator_angle = 'None'
+                    else:
+                        right_elevator_angle = round(elevator.RightElevator.ElevatorUtils.angle_deg, 2)
+                    data_list = [round(time_counter, 2), left_motor_angle, round(adc.ADCData.adc_left_angle, 2), right_motor_angle, round(adc.ADCData.adc_right_angle, 2),
+                                 left_elevator_angle, right_elevator_angle,
                                  round(adc.ADCData.adc_7V4_voltage, 4), round(adc.ADCData.adc_7V4_current, 4),
                                  round(imu.IMUData.acc_x, 4), round(imu.IMUData.acc_y, 4), round(imu.IMUData.acc_z, 4), round(imu.IMUData.gyro_x, 4), round(imu.IMUData.gyro_y, 4), round(imu.IMUData.gyro_z, 4),
                                  round(imu.IMUData.roll_angle_deg, 2), round(imu.IMUData.pitch_angle_deg, 2)]
                     writer.writerow(data_list)
                     file.flush()
-                    time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
+                    try:
+                        time.sleep((1/self.sample_rate_hz) - (time.time() - time_start))
+                    except ValueError:
+                        pass
                     time_counter += 1/self.sample_rate_hz
                 
     def pause(self):
