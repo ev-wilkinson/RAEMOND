@@ -27,10 +27,10 @@ def init():
     # adc settings
     global ADC_SAMPLE_RATE_HZ, LEFT_POT_CORR_SLOPE, LEFT_POT_CORR_OFFSET, RIGHT_POT_CORR_SLOPE, RIGHT_POT_CORR_OFFSET, LOW_BATTERY_VOLTAGE
     ADC_SAMPLE_RATE_HZ = 20
-    LEFT_POT_CORR_SLOPE = 103.45 # (angle2 - angle1)/(Vadc2 - Vadc1) = (90 - 0)/(2.52 - 1.65V)
-    LEFT_POT_CORR_OFFSET = -170.69 # -1*SLOPE*Vadc(angle=0) = -(103.45)(1.65V)
+    LEFT_POT_CORR_SLOPE = -103.45 # (angle2 - angle1)/(Vadc2 - Vadc1) = (90 - 0)/(2.52 - 1.65V)
+    LEFT_POT_CORR_OFFSET = -170.7 # -1*SLOPE*Vadc(angle=0) = -(103.45)(1.65V)
     RIGHT_POT_CORR_SLOPE = 103.45 # (angle2 - angle1)/(Vadc2 - Vadc1) = (90 - 0)/(2.52 - 1.65V)
-    RIGHT_POT_CORR_OFFSET = -170.69 # -1*SLOPE*Vadc(angle=0) = -(103.45)(1.65V)
+    RIGHT_POT_CORR_OFFSET = -170.7 # -1*SLOPE*Vadc(angle=0) = -(103.45)(1.65V)
     LOW_BATTERY_VOLTAGE = 7.4
 
     # imu settings
@@ -48,7 +48,7 @@ def init():
     ELEV_CORR_ANGLE_DEG_MAX = 45
     ELEV_CORR_ANGLE_DEG_MIN = -45
     ELEV_CORR_PERIOD_S = 0.1
-    ELEV_CORR_ANGLE_FACTOR = 5
+    ELEV_CORR_ANGLE_FACTOR = 2
 
     # data log settings
     global LOG_SAMPLE_RATE_HZ

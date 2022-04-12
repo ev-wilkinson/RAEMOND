@@ -4,6 +4,7 @@ import adc
 import imu
 import elevator
 import data_log
+import settings
 
 def init():
     global command_dict # setup commands dictionary
@@ -27,7 +28,6 @@ def motor_config(args):
                         f'Angle Read: {round(adc.ADCData.adc_left_angle, 1)} degrees\n'
                         f'Flap Frequency: {round(motor.LeftMotor.MotorUtils.flap_freq_hz, 1)} Hz\n'
                         f'Flap Amplitude: {round(motor.LeftMotor.MotorUtils.flap_amplitude_deg, 1)} degrees\n'
-                        f'Sample Rate: {round(motor.LeftMotor.MotorUtils.flap_sample_rate_hz, 1)} Hz\n'
                         f'Running: {not motor.LeftMotor.paused}\n'
                         '\nSuccess!')
             elif args[1] == 'RIGHT':
@@ -39,7 +39,6 @@ def motor_config(args):
                         f'Angle Read: {round(adc.ADCData.adc_right_angle, 1)} degrees\n'
                         f'Flap Frequency: {round(motor.RightMotor.MotorUtils.flap_freq_hz, 1)} Hz\n'
                         f'Flap Amplitude: {round(motor.RightMotor.MotorUtils.flap_amplitude_deg, 1)} degrees\n'
-                        f'Sample Rate: {round(motor.RightMotor.MotorUtils.flap_sample_rate_hz, 1)} Hz\n'
                         f'Running: {not motor.RightMotor.paused}\n'
                         '\nSuccess!')
             else:
@@ -75,21 +74,21 @@ def motor_config(args):
 
         elif args[0] == 'FREQ':
             if args[1] == 'LEFT':
-                return motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
+                return motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[2]))
             elif args[1] == 'RIGHT':
-                return motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))
+                return motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[2]))
             elif args[1] == 'BOTH':
-                return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[3]))}'
+                return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[2]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
 
         elif args[0] == 'AMPLITUDE':
             if args[1] == 'LEFT':
-                return motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
+                return motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))
             elif args[1] == 'RIGHT':
-                return motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))
+                return motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))
             elif args[1] == 'BOTH':
-                return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[3]))}'
+                return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
 
@@ -133,7 +132,7 @@ def motor_config(args):
 
     except IndexError:
         return 'Invalid Command Arguments!'
-    except:         
+    except: 
         return 'Error Ocurred!'
 
 def adc_config(args):
@@ -168,7 +167,7 @@ def adc_config(args):
         
     except IndexError:  
         return 'Invalid Command Arguments!'
-    except:         
+    except:
         return 'Error Ocurred!'
 
 def imu_config(args):
@@ -207,7 +206,7 @@ def imu_config(args):
         
     except IndexError:  
         return 'Invalid Command Arguments!'
-    except:         
+    except:
         return 'Error Ocurred!'
 
 def elevator_config(args):
@@ -300,7 +299,7 @@ def elevator_config(args):
 
     except IndexError:
         return 'Invalid Command Arguments!'
-    except:         
+    except:
         return 'Error Ocurred!'
 
 def log_config(args):
@@ -315,7 +314,7 @@ def log_config(args):
             return 'Invalid Command Arguments!' 
     except IndexError:
         return 'Invalid Command Arguments!'
-    except:         
+    except:
         return 'Error Ocurred!'
 
 def print_help(args):

@@ -28,31 +28,34 @@ def main():
 
         # flap mode state
         while settings.flap_mode:
-            gpio.BlueLEDBlinker.set_blinking_interval(blink_interval_s=0.25)
-            gpio.BlueLEDBlinker.resume() # blink blue LED
-            data_log.FileWriter.resume() # start logging data
-            motor.LeftMotor.MotorUtils.zero_angle()
-            motor.RightMotor.MotorUtils.zero_angle()
-            elevator.LeftElevator.ElevatorUtils.zero_angle()
-            elevator.RightElevator.ElevatorUtils.zero_angle()
-            time.sleep(1)
-            motor.LeftMotor.resume()
-            motor.RightMotor.resume()
-            elevator.LeftElevator.resume()
-            elevator.RightElevator.resume()
-            while settings.flap_mode:
-                pass # hold here until flap mode is deactivated
-            motor.LeftMotor.pause() # pause left motor setpoints
-            motor.RightMotor.pause() # pause right motor setpoints
-            motor.LeftMotor.MotorUtils.stop() # turn off left motor
-            motor.RightMotor.MotorUtils.stop() # turn off right motor
-            elevator.LeftElevator.pause() # pause left elevator setpoints
-            elevator.RightElevator.pause() # pause right elevator setpoints
-            time.sleep(1)
-            elevator.LeftElevator.ElevatorUtils.stop() # turn off left elevator
-            elevator.RightElevator.ElevatorUtils.stop() # turn off right elevator
-            data_log.FileWriter.pause() # stop logging data 
-            gpio.BlueLEDBlinker.pause() # stop blinking blue LED
+            try:
+                gpio.BlueLEDBlinker.set_blinking_interval(blink_interval_s=0.25)
+                gpio.BlueLEDBlinker.resume() # blink blue LED
+                data_log.FileWriter.resume() # start logging data
+                motor.LeftMotor.MotorUtils.zero_angle()
+                motor.RightMotor.MotorUtils.zero_angle()
+                elevator.LeftElevator.ElevatorUtils.zero_angle()
+                elevator.RightElevator.ElevatorUtils.zero_angle()
+                time.sleep(1)
+                motor.LeftMotor.resume()
+                motor.RightMotor.resume()
+                elevator.LeftElevator.resume()
+                elevator.RightElevator.resume()
+                while settings.flap_mode:
+                    pass # hold here until flap mode is deactivated
+                motor.LeftMotor.pause() # pause left motor setpoints
+                motor.RightMotor.pause() # pause right motor setpoints
+                motor.LeftMotor.MotorUtils.stop() # turn off left motor
+                motor.RightMotor.MotorUtils.stop() # turn off right motor
+                elevator.LeftElevator.pause() # pause left elevator setpoints
+                elevator.RightElevator.pause() # pause right elevator setpoints
+                time.sleep(1)
+                elevator.LeftElevator.ElevatorUtils.stop() # turn off left elevator
+                elevator.RightElevator.ElevatorUtils.stop() # turn off right elevator
+                data_log.FileWriter.pause() # stop logging data 
+                gpio.BlueLEDBlinker.pause() # stop blinking blue LED
+            except:
+                raise
 
         # configuration state
         while not settings.flap_mode:
