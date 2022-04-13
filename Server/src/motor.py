@@ -1,7 +1,16 @@
-from rpi_hardware_pwm import HardwarePWM
+# elevator.py
+# Description: Driver for SW2290SG-BE servo used for motor wing actuation
+# Author: Evan Wilkinson
+
+# standard libraries
 import threading
 import numpy as np
 import time
+
+# external libraries
+from rpi_hardware_pwm import HardwarePWM # https://pypi.org/project/rpi-hardware-pwm/
+
+# modules
 import settings
 
 def init():
@@ -9,8 +18,8 @@ def init():
     # initiliaze motors
     global RightMotor, LeftMotor
     RightMotor, LeftMotor = MotorThread(pwm_channel=0), MotorThread(pwm_channel=1, reverse_angle=True)
-    RightMotor.start()
-    LeftMotor.start()
+    RightMotor.start() # start thread
+    LeftMotor.start() # start thread
 
 class MotorThread(threading.Thread):
     def __init__(self, pwm_channel, reverse_angle=False):
@@ -24,13 +33,14 @@ class MotorThread(threading.Thread):
             with self.state:
                 if self.paused:
                     self.state.wait()  # Block execution until notified.
+            # run flapping cycle        
             for angle in self.MotorUtils.flap_angle_array:
                 if self.paused:
                     break
                 time_start = time.time()
                 self.MotorUtils.set_angle_deg(angle)
                 try:
-                    time.sleep((1/settings.MOTOR_FLAP_SAMPLE_RATE_HZ) - (time.time() - time_start))
+                    time.sleep((1/settings.MOTOR_FLAP_SAMPLE_RATE_HZ) - (time.time() - time_start)) # delay for sample rate timing
                 except ValueError:
                     pass    
 

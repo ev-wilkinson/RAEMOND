@@ -1,14 +1,23 @@
-import RPi.GPIO as GPIO
+# elevator.py
+# Description: Driver for SG90 digital servo used for elevator control
+# Author: Evan Wilkinson
+
+# standard libraries
 import threading
 import imu
 import time
+
+# Rasbian libraries
+import RPi.GPIO as GPIO
+
+# modules
 import settings
 
 def init():
     global RightElevator, LeftElevator
     RightElevator, LeftElevator = ElevatorThread(gpio_pin=23, zero_offset=settings.RIGHT_ELEV_ZERO_OFFSET), ElevatorThread(gpio_pin=24, zero_offset=settings.LEFT_ELEV_ZERO_OFFSET, reverse_angle=True)
-    RightElevator.start()
-    LeftElevator.start()
+    RightElevator.start() # start thread
+    LeftElevator.start() # start thread
 
 class ElevatorThread(threading.Thread):
 
@@ -26,7 +35,8 @@ class ElevatorThread(threading.Thread):
             while True:
                 if self.paused:
                     break
-                correction_angle_deg = -1*imu.IMUData.pitch_angle_deg*settings.ELEV_CORR_ANGLE_FACTOR
+                correction_angle_deg = -1*imu.IMUData.pitch_angle_deg*settings.ELEV_CORR_ANGLE_FACTOR # set elevators based on imu sensor reading
+                # set angle to max or min if correction angle outside of valid range
                 if settings.ELEV_CORR_ANGLE_DEG_MIN <= correction_angle_deg <= settings.ELEV_CORR_ANGLE_DEG_MAX:
                     self.ElevatorUtils.set_angle_deg(correction_angle_deg)
                 elif correction_angle_deg < settings.ELEV_CORR_ANGLE_DEG_MIN:
@@ -60,7 +70,7 @@ class ElevatorUtils:
 
         # setup variables
         self.angle_deg = None
-        self.reverse_angle = reverse_angle
+        self.reverse_angle = reverse_angle # reverse servo angle setpoints if installed with reverse orientation
         self.zero_offset = zero_offset 
 
         # setup pwm 

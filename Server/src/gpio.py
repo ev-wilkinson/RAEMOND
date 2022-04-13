@@ -1,6 +1,15 @@
-import RPi.GPIO as GPIO
+# gpio.py
+# Description: Driver for toggling LED's and button interupt
+# Author: Evan Wilkinson
+
+# standard libraries
 import threading
 import time
+
+# Rasbian libraries
+import RPi.GPIO as GPIO
+
+# modules
 import settings
 
 def init():
@@ -9,9 +18,10 @@ def init():
     global IOCtrl, BlueLEDBlinker
     IOCtrl = IOUtils()
     BlueLEDBlinker = BlueLEDBlinkingThread()
-    BlueLEDBlinker.start()
+    BlueLEDBlinker.start() # start thread
 
 def button_pressed(channel):
+    # function for interupt handler
     if settings.flap_mode:
         settings.flap_mode = False
     else:
@@ -33,6 +43,7 @@ class BlueLEDBlinkingThread(threading.Thread):
             while True:
                 if self.paused:
                     break
+                # blink LED
                 IOCtrl.turn_off_blue()
                 time.sleep(self.blink_interval_s)
                 IOCtrl.turn_on_blue()
@@ -53,6 +64,7 @@ class BlueLEDBlinkingThread(threading.Thread):
 
 class IOUtils:
 
+    # pinouts
     BLUE_LED_PIN = 14
     RED_LED_PIN = 15
     BUTTON_PIN = 27
@@ -60,8 +72,8 @@ class IOUtils:
     def __init__(self):
 
         # setup button 
-        GPIO.setup(self.BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.BUTTON_PIN, GPIO.FALLING, callback=button_pressed, bouncetime=settings.BUTTON_BOUNCE_TIME_MS)
+        GPIO.setup(self.BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) # button press = 0, button unpressed = 1
+        GPIO.add_event_detect(self.BUTTON_PIN, GPIO.FALLING, callback=button_pressed, bouncetime=settings.BUTTON_BOUNCE_TIME_MS) # interupt subroutine
 
         # setup leds
         GPIO.setup(self.BLUE_LED_PIN, GPIO.OUT)

@@ -1,4 +1,11 @@
+# commands.py
+# Description: contains functions for bluetooth socket commands
+# Author: Evan Wilkinson
+
+# standard libraries
 import time
+
+# modules
 import motor
 import adc
 import imu
@@ -17,7 +24,9 @@ def init():
     }
 
 def motor_config(args):
+    # function to configure left, right or both motors
     try:
+        # display current motor values: Angle Setpoint, Angle Read, Flap Frequency, Flap Amplitude, Thread Running
         if args[0] == 'SHOW':
             if args[1] == 'LEFT':
                 if motor.LeftMotor.MotorUtils.angle_deg is None:
@@ -43,7 +52,7 @@ def motor_config(args):
                         '\nSuccess!')
             else:
                 return 'Invalid Command Arguments!'
-
+        # set motor angle to zero position
         elif args[0] == 'ZERO':
             if args[1] == 'LEFT':
                 motor.LeftMotor.pause()
@@ -57,7 +66,7 @@ def motor_config(args):
                 return f'LEFT: {motor.LeftMotor.MotorUtils.zero_angle()}\nRIGHT: {motor.RightMotor.MotorUtils.zero_angle()}'
             else:
                 return 'Invalid Command Arguments!'
-
+        # set motor to an angle
         elif args[0] == 'ANGLE':
             if args[1] == 'LEFT':
                 motor.LeftMotor.pause()
@@ -71,7 +80,7 @@ def motor_config(args):
                 return f'LEFT: {motor.LeftMotor.MotorUtils.set_angle_deg(float(args[2]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_angle_deg(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
-
+        # configure flapping frequency when motor starts
         elif args[0] == 'FREQ':
             if args[1] == 'LEFT':
                 return motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[2]))
@@ -81,7 +90,7 @@ def motor_config(args):
                 return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_freq_hz(float(args[2]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_freq_hz(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
-
+        # configure flapping angle amplitude when motor starts
         elif args[0] == 'AMPLITUDE':
             if args[1] == 'LEFT':
                 return motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))
@@ -91,7 +100,7 @@ def motor_config(args):
                 return f'LEFT: {motor.LeftMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))}\nRIGHT: {motor.RightMotor.MotorUtils.set_flap_amplitude_deg(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
-
+        # zero motor first then resume motor thread
         elif args[0] == 'START':   
             if args[1] == 'LEFT':
                 motor.LeftMotor.MotorUtils.zero_angle()
@@ -112,7 +121,7 @@ def motor_config(args):
                 return 'Success!'
             else:
                 return 'Invalid Command Arguments!'
-
+        # pause motor thread and disable pwm signal
         elif args[0] == 'STOP':   
             if args[1] == 'LEFT':
                 motor.LeftMotor.pause()
@@ -125,18 +134,18 @@ def motor_config(args):
                 motor.RightMotor.pause()
                 return f'LEFT: {motor.LeftMotor.MotorUtils.stop()}\nRIGHT: {motor.RightMotor.MotorUtils.stop()}'
             else:
-                return 'Invalid Command Arguments!'
-        
+                return 'Invalid Command Arguments!'        
         else:
             return 'Invalid Command Arguments!'
-
     except IndexError:
         return 'Invalid Command Arguments!'
     except: 
-        return 'Error Ocurred!'
+        return 'Error Ocurred!' # raise if unexpected error occurs
 
 def adc_config(args):
+    # function to sample adc 
     try:
+        # sample adc then convert data
         if args[0] == 'DATA':
             paused = adc.ADCCtrl.paused # get initial pause state
             adc.ADCCtrl.pause()
@@ -149,7 +158,7 @@ def adc_config(args):
                     f'Left Angle: {round(adc.ADCData.adc_left_angle, 1)} degrees\n'
                     f'Right Angle: {round(adc.ADCData.adc_right_angle, 1)} degrees\n'
                     '\nSuccess!')
-
+        # get adc sample voltages
         elif args[0] == 'RAW':
             paused = adc.ADCCtrl.paused # get initial pause state
             adc.ADCCtrl.pause()
@@ -163,15 +172,16 @@ def adc_config(args):
                     f'CH4: {round(adc.ADCData.adc_ch4_raw, 4)} V\n'
                     '\nSuccess!')
         else:
-            return 'Invalid Command Arguments!'
-        
+            return 'Invalid Command Arguments!'        
     except IndexError:  
         return 'Invalid Command Arguments!'
     except:
-        return 'Error Ocurred!'
+        return 'Error Ocurred!' # raise if unexpected error occurs
 
 def imu_config(args):
+    # function to sample imu sensor
     try:
+        # sample imu then convert data
         if args[0] == 'DATA':
             paused = imu.IMUCtrl.paused # get initial pause state
             imu.IMUCtrl.pause()
@@ -187,7 +197,7 @@ def imu_config(args):
                     f'Roll: {round(imu.IMUData.roll_angle_deg, 2)} degrees\n'
                     f'Pitch: {round(imu.IMUData.pitch_angle_deg, 2)} degrees\n'
                     '\nSuccess!')
-
+        # get raw imu sensor output
         elif args[0] == 'RAW':
             paused = imu.IMUCtrl.paused # get initial pause state
             imu.IMUCtrl.pause()
@@ -203,14 +213,15 @@ def imu_config(args):
                     '\nSuccess!')
         else:
             return 'Invalid Command Arguments!'
-        
     except IndexError:  
         return 'Invalid Command Arguments!'
     except:
-        return 'Error Ocurred!'
+        return 'Error Ocurred!' # raise if unexpected error occurs
 
 def elevator_config(args):
+    # function to configure left, right or both elevators
     try:
+        # display current elevator status: Angle Setpoint, Thread Running
         if args[0] == 'SHOW':
             if args[1] == 'LEFT':
                 if elevator.LeftElevator.ElevatorUtils.angle_deg is None:
@@ -230,7 +241,7 @@ def elevator_config(args):
                         '\nSuccess!')
             else:
                 return 'Invalid Command Arguments!'
-
+        # set elevator angle to zero position
         elif args[0] == 'ZERO':
             if args[1] == 'LEFT':
                 elevator.LeftElevator.pause()
@@ -244,7 +255,7 @@ def elevator_config(args):
                 return f'LEFT: {elevator.LeftElevator.ElevatorUtils.zero_angle()}\nRIGHT: {elevator.RightElevator.ElevatorUtils.zero_angle()}'
             else:
                 return 'Invalid Command Arguments!'
-
+        # set elevator to an angle
         elif args[0] == 'ANGLE':
             if args[1] == 'LEFT':
                 elevator.LeftElevator.pause()
@@ -258,7 +269,7 @@ def elevator_config(args):
                 return f'LEFT: {elevator.LeftElevator.ElevatorUtils.set_angle_deg(float(args[2]))}\nRIGHT: {elevator.RightElevator.ElevatorUtils.set_angle_deg(float(args[2]))}'
             else:
                 return 'Invalid Command Arguments!'
-
+        # zero elevator first then resume elevator thread
         elif args[0] == 'START':   
             if args[1] == 'LEFT':
                 elevator.LeftElevator.ElevatorUtils.zero_angle()
@@ -279,7 +290,7 @@ def elevator_config(args):
                 return 'Success!'
             else:
                 return 'Invalid Command Arguments!'
-
+        # pause motor thread and disable pwm signal
         elif args[0] == 'STOP':   
             if args[1] == 'LEFT':
                 elevator.LeftElevator.pause()
@@ -293,20 +304,21 @@ def elevator_config(args):
                 return f'LEFT: {elevator.LeftElevator.ElevatorUtils.stop()}\nRIGHT: {elevator.RightElevator.ElevatorUtils.stop()}'
             else:
                 return 'Invalid Command Arguments!'
-        
         else:
             return 'Invalid Command Arguments!'
-
     except IndexError:
         return 'Invalid Command Arguments!'
     except:
-        return 'Error Ocurred!'
+        return 'Error Ocurred!' # raise if unexpected error occurs
 
 def log_config(args):
+    # function to start or stop data logging
     try:
+        # open csv file and write data
         if args[0] == 'START': 
             data_log.FileWriter.resume()
             return 'Success!'
+        # close csv file if open
         elif args[0] == 'STOP':
             data_log.FileWriter.pause()
             return 'Success!'
@@ -315,9 +327,10 @@ def log_config(args):
     except IndexError:
         return 'Invalid Command Arguments!'
     except:
-        return 'Error Ocurred!'
+        return 'Error Ocurred!' # raise if unexpected error occurs
 
 def print_help(args):
+    # function to display expected commands
     return ('\nCommands:\n'
             'HELP\n'                                                                    
             'MOTOR SHOW [LEFT|RIGHT]\n'             

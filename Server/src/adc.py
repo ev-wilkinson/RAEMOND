@@ -1,6 +1,15 @@
-import spidev
+# adc.py
+# Description: Driver for MCP3208 ADC with threading for constant sampling
+# Author: Evan Wilkinson
+
+# standard libraries
 import threading
 import time
+
+# external libraries
+import spidev # https://pypi.org/project/spidev/
+
+# modules
 import settings
 import gpio
 
@@ -8,7 +17,7 @@ def init():
     global ADCData, ADCCtrl
     ADCData = ADCUtils()
     ADCCtrl = ADCThread()
-    ADCCtrl.start()
+    ADCCtrl.start() # start thread
 
 class ADCThread(threading.Thread):
     def __init__(self):
@@ -26,13 +35,13 @@ class ADCThread(threading.Thread):
                 if self.paused:
                     break
                 time_start = time.time()
-                ADCData.get_all_data()
+                ADCData.get_all_data() # sample adc
                 if ADCData.adc_7V4_voltage < settings.LOW_BATTERY_VOLTAGE:
-                    gpio.IOCtrl.turn_on_red()
+                    gpio.IOCtrl.turn_on_red() # turn on red led if low voltage
                 else:
                     gpio.IOCtrl.turn_off_red()    
                 try:
-                    time.sleep((1/settings.ADC_SAMPLE_RATE_HZ) - (time.time() - time_start))
+                    time.sleep((1/settings.ADC_SAMPLE_RATE_HZ) - (time.time() - time_start)) # delay for sample rate timing
                 except ValueError:
                     pass 
 

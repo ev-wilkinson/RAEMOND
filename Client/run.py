@@ -1,3 +1,8 @@
+# main.py
+# Description: run this file on Windows PC to send commands to Raspberry Pi Zero via bluetooth
+# Author: Evan Wilkinson
+
+# standard libraries
 import socket
 
 while True:

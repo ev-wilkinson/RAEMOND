@@ -1,3 +1,7 @@
+# settings.py
+# Description: holds global settings used throughout program
+# Author: Evan Wilkinson
+
 def init():
 
     # application variables
@@ -14,7 +18,7 @@ def init():
 
     # gpio settings
     global BUTTON_BOUNCE_TIME_MS
-    BUTTON_BOUNCE_TIME_MS = 200
+    BUTTON_BOUNCE_TIME_MS = 200 # button debouncing delay
 
     # motor settings
     global MOTOR_FLAP_SAMPLE_RATE_HZ, MOTOR_FLAP_SAMPLE_RATE_HZ_MAX, MOTOR_FLAP_SAMPLE_RATE_HZ_MIN, MOTOR_FLAP_FREQ_HZ_MAX, MOTOR_FLAP_FREQ_HZ_MIN
@@ -38,17 +42,17 @@ def init():
     IMU_SAMPLE_RATE_HZ = 20
     IMU_ACC_SENSITIVITY_FACTOR = 16384.0
     IMU_GYRO_SENSITIVITY_FACTOR = 131.0
-    IMU_PITCH_OFFSET = -5.2
-    IMU_ROLL_OFFSET = -1.0 
+    IMU_PITCH_OFFSET = -5.2 # calibrated when device is on flat surface
+    IMU_ROLL_OFFSET = -1.0 # calibrated when device is on flat surface
 
     # elevator settings
     global LEFT_ELEV_ZERO_OFFSET, RIGHT_ELEV_ZERO_OFFSET, ELEV_CORR_ANGLE_DEG_MAX, ELEV_CORR_ANGLE_DEG_MIN, ELEV_CORR_PERIOD_S, ELEV_CORR_ANGLE_FACTOR
-    LEFT_ELEV_ZERO_OFFSET = -35
-    RIGHT_ELEV_ZERO_OFFSET = -20
-    ELEV_CORR_ANGLE_DEG_MAX = 45
-    ELEV_CORR_ANGLE_DEG_MIN = -45
+    LEFT_ELEV_ZERO_OFFSET = -35 # calibrated servo zero value after installation
+    RIGHT_ELEV_ZERO_OFFSET = -20 # calibrated servo zero value after installation
+    ELEV_CORR_ANGLE_DEG_MAX = 45 # max elevator set angle
+    ELEV_CORR_ANGLE_DEG_MIN = -45 # min elevator set angle
     ELEV_CORR_PERIOD_S = 0.1
-    ELEV_CORR_ANGLE_FACTOR = 2
+    ELEV_CORR_ANGLE_FACTOR = 2 # gain on imu sensor feedback
 
     # data log settings
     global LOG_SAMPLE_RATE_HZ

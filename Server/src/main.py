@@ -1,8 +1,16 @@
+# main.py
+# Description: run this file on Raspberry Pi Zero to start application
+# Author: Evan Wilkinson
+
+# standard libraries
 import socket
 import select
-import RPi.GPIO as GPIO
 import time
 
+# Rasbian libraries
+import RPi.GPIO as GPIO
+
+# modules
 import settings
 import commands
 import gpio
@@ -32,15 +40,15 @@ def main():
                 gpio.BlueLEDBlinker.set_blinking_interval(blink_interval_s=0.25)
                 gpio.BlueLEDBlinker.resume() # blink blue LED
                 data_log.FileWriter.resume() # start logging data
-                motor.LeftMotor.MotorUtils.zero_angle()
-                motor.RightMotor.MotorUtils.zero_angle()
-                elevator.LeftElevator.ElevatorUtils.zero_angle()
-                elevator.RightElevator.ElevatorUtils.zero_angle()
-                time.sleep(1)
-                motor.LeftMotor.resume()
-                motor.RightMotor.resume()
-                elevator.LeftElevator.resume()
-                elevator.RightElevator.resume()
+                motor.LeftMotor.MotorUtils.zero_angle() # zero left wing
+                motor.RightMotor.MotorUtils.zero_angle() # zero right wing
+                elevator.LeftElevator.ElevatorUtils.zero_angle() # zero left elevator
+                elevator.RightElevator.ElevatorUtils.zero_angle() # zero right elevator
+                time.sleep(1) # delay to ensure servos get to zero
+                motor.LeftMotor.resume() # start left wing flapping cycle
+                motor.RightMotor.resume() # start right wing flapping cycle
+                elevator.LeftElevator.resume() # start left elevator correction
+                elevator.RightElevator.resume() # start right elevator correction
                 while settings.flap_mode:
                     pass # hold here until flap mode is deactivated
                 motor.LeftMotor.pause() # pause left motor setpoints
@@ -49,7 +57,7 @@ def main():
                 motor.RightMotor.MotorUtils.stop() # turn off right motor
                 elevator.LeftElevator.pause() # pause left elevator setpoints
                 elevator.RightElevator.pause() # pause right elevator setpoints
-                time.sleep(1)
+                time.sleep(1) # delay to ensure elevator has stopped setting angle
                 elevator.LeftElevator.ElevatorUtils.stop() # turn off left elevator
                 elevator.RightElevator.ElevatorUtils.stop() # turn off right elevator
                 data_log.FileWriter.pause() # stop logging data 
@@ -71,6 +79,7 @@ def main():
                 gpio.IOCtrl.turn_on_blue() # keep blue LED on
                 while not settings.flap_mode:
                     ready = select.select([client], [], [], settings.BT_TIMEOUT_S)
+                    # parse command if receive buffer ready
                     if ready[0]:
                         recv_str = client.recv(settings.BT_BUFFER_SIZE).decode().upper()
                         recv_str_list = recv_str.split()
@@ -80,7 +89,7 @@ def main():
                                 args = recv_str_list[1:]
                             except IndexError:
                                 args = []
-                            return_str = commands.command_dict[command](args)
+                            return_str = commands.command_dict[command](args) # index command dict and pass arguments
                             client.send(return_str.encode())
                         else:
                             client.send('Invalid Command!'.encode())

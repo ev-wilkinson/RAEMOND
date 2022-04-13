@@ -1,14 +1,23 @@
-import smbus
+# imu.py
+# Description: Driver for MPU6050 IMU with threading for constant sampling
+# Author: Evan Wilkinson
+
+# standard libraries
 import threading
 import time
 import math
+
+# external libraries
+import smbus # https://pypi.org/project/smbus/
+
+# modules
 import settings
 
 def init():
     global IMUData, IMUCtrl
     IMUData = IMU()
     IMUCtrl = IMUThread()
-    IMUCtrl.start()
+    IMUCtrl.start() # start thread
 
 class IMUThread(threading.Thread):
     def __init__(self):
@@ -26,9 +35,9 @@ class IMUThread(threading.Thread):
                 if self.paused:
                     break
                 time_start = time.time()
-                IMUData.get_all_data()
+                IMUData.get_all_data() # sample imu
                 try:
-                    time.sleep((1/settings.IMU_SAMPLE_RATE_HZ) - (time.time() - time_start))
+                    time.sleep((1/settings.IMU_SAMPLE_RATE_HZ) - (time.time() - time_start)) # delay for sample rate timing
                 except ValueError:
                     pass 
 
@@ -92,8 +101,8 @@ class IMU:
     def mpu_init(self):
         self.i2c.write_byte_data(self.DEVICE_ADR, self.SMPLRT_DIV, 7) # write to sample rate register
         self.i2c.write_byte_data(self.DEVICE_ADR, self.PWR_MGMT_1, 1) # write to power management register
-        self.i2c.write_byte_data(self.DEVICE_ADR, self.CONFIG, 0) # write to Configuration register
-        self.i2c.write_byte_data(self.DEVICE_ADR, self.GYRO_CONFIG, 24) # write to Gyro configuration register
+        self.i2c.write_byte_data(self.DEVICE_ADR, self.CONFIG, 0) # write to configuration register
+        self.i2c.write_byte_data(self.DEVICE_ADR, self.GYRO_CONFIG, 24) # write to gyro configuration register
         self.i2c.write_byte_data(self.DEVICE_ADR, self.INT_ENABLE, 1) # write to interrupt enable register
 
     def read_raw_data(self, addr):
